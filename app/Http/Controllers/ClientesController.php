@@ -17,19 +17,21 @@ use App\Models\cliente;
     }
 
         Public function crear(Request $request){
+           
+            
             $cliente = new Cliente();
 
-            $cliente->cliente_nombre = $request->nombre;
-            $cliente->cliente_direccion = $request->direccion;
-            $cliente->cliente_localidad = $request->localidad;
-            $cliente->cliente_email = $request->email;
-            $cliente->cliente_contraseña = Hash::make($request->contraseña);
-            $cliente->cliente_telefono = $request->telefono;
+            $cliente->cliente_nombre = $request->input('cliente_nombre');
+            $cliente->cliente_direccion = $request->input('cliente_direccion');
+            $cliente->cliente_localidad =$request->input('cliente_localidad');
+            $cliente->cliente_email = $request->input('cliente_email');
+            $cliente->cliente_contraseña = Hash::make($request->input('cliente_password'));
+            $cliente->cliente_telefono = $request->input('cliente_telefono');
             
 
             $cliente->save();
 
-            return redirect("/Clientes/Login");
+            return response()->json(['status'=>'OK'],200);
 
         }
 
@@ -38,18 +40,41 @@ use App\Models\cliente;
         }
         public function login(Request $request)
         {
-            $credentials = $request->only('cliente_email', 'cliente_contraseña');
-    
-            
-            if (Auth::guard('cliente')->attempt(['cliente_email' => $credentials['cliente_email'], 'password' => $credentials['cliente_contraseña']])) {
-             
-                return redirect()->intended('/');
-            }
-    
-          
-            return back()->withErrors([
-                'cliente_email' => 'Correo electrónico o contraseña incorrectos.',
+            $request->validate([ 
+                'cliente_email' => 'required',
+                'cliente_password' => 'required', 
             ]);
+
+            $cliente_email = $request->input('cliente_email');
+            $cliente_password = $request->input('cliente_password');
+
+            $auth = Auth::guard('cliente')->attempt([
+
+                
+
+                'cliente_email' => $cliente_email,
+                'cliente_contraseña' => $cliente_password,
+
+
+            ]);
+
+           // return $auth;
+
+            if($auth){
+
+                //$id = Auth::guard('cliente')->id;
+
+                $cliente = Cliente::where('email', $cliente_email)->first();
+
+                return response()->json([
+                    'status' => 'OK',
+                    'token' => $cliente->createToken('accesToken')->plainTextToken
+                ]);
+            }else{
+                return response()->json([
+                    'status' => 'KO'
+                ]);
+            }
         }
 
         

@@ -11,8 +11,8 @@ class ProductosController extends Controller
         $productos = Producto::all();
         //return $productos;
         //para enviarlo a la vista
-         return view("Productos", compact("productos"));
-         //return response()->json($productos); 
+         //return view("Productos", compact("productos"));
+         return response()->json($productos,200);
         
 
     }
