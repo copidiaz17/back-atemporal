@@ -14,14 +14,9 @@ return [
         ],
 
         'api' => [
-        'driver' => 'token',
-        'provider' => 'users',
-        'hash' => false,
-    ],
-
-        'cliente' => [
-            'driver' => 'session',
-            'provider' => 'clientes',
+            'driver' => 'token',
+            'provider' => 'users',
+            'hash' => false,
         ],
     ],
 
@@ -30,23 +25,11 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
         ],
-
-        'clientes' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\Cliente::class,
-        ],
     ],
 
     'passwords' => [
         'users' => [
             'provider' => 'users',
-            'table' => 'password_resets',
-            'expire' => 60,
-            'throttle' => 60,
-        ],
-
-        'clientes' => [
-            'provider' => 'clientes',
             'table' => 'password_resets',
             'expire' => 60,
             'throttle' => 60,
