@@ -24,9 +24,10 @@ Route::post('/Clientes/Crear', [ClientesController::class, "crear"]);
 Route::get('/Clientes/Login', [ClientesController::class, "ingresar"]);
 
 Route::post('/Clientes/Login', [ClientesController::class, "login"]);
+Route::get('/Clientes/ver', [ClientesController::class, "datos"]);
 
 
-Route::get('/Productos', [ProductosController::class, "index"]);
+Route::middleware(['auth.basic', 'auth.verifyToken'])->get('/Productos', [ProductosController::class, "index"]);
 
 Route::get('/Productos/Categorias', [ProductosController::class, 'categoria']);
 

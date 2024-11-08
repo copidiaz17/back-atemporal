@@ -29,7 +29,7 @@ Route::get('/Clientes/Datos', [ClientesController::class, "datos"])
     ->middleware('auth:sanctum');
 
 
-Route::get('/Productos', [ProductosController::class, "index"]);
+Route::middleware('auth.verifyToken')->get('/Productos', [ProductosController::class, "index"]);
 
 Route::get('/Productos/Categorias', [ProductosController::class, 'categoria']);
 

@@ -1,31 +1,43 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Producto;
 use App\Models\Categoria;
 use App\Models\venta;
 use Illuminate\Http\Request;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class ProductosController extends Controller
 {
-    Public function index(){
+    public function index(Request $request)
+    {
+
         $productos = Producto::all();
         //return $productos;
         //para enviarlo a la vista
-         //return view("Productos", compact("productos"));
-         return response()->json($productos,200);
-        
-
+        //return view("Productos", compact("productos"));
+        //  return response()->json($productos,200);
+        $tokens = PersonalAccessToken::all();
+        $user = $request->user;
+        return response()
+            ->json([
+                'user' => $request->user,
+                'tokens' => $tokens, 
+                'token' => $request->cookie('atemporal_token')
+            ]);
     }
 
-    public function crear(){
+    public function crear()
+    {
         return view("formProducto");
-    } 
+    }
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
 
         $producto = new Producto();
-        
+
         $producto->producto_nombre = $request->nombre;
         $producto->producto_descripcion = $request->descripcion;
         $producto->producto_imagen = $request->imagen;
@@ -35,27 +47,30 @@ class ProductosController extends Controller
 
         $productoJSON = json_encode($producto);
 
-    return $productoJSON;
+        return $productoJSON;
 
         //return redirect('/Productos');
 
     }
 
-    Public function mostrar($producto){
+    public function mostrar($producto)
+    {
         $producto = Producto::find($producto);
         return view("mostrar", compact("producto"));
         //$productoJSON = json_encode($producto);
 
-    //return $productoJSON;
+        //return $productoJSON;
     }
 
-    Public function editar($id){
+    public function editar($id)
+    {
 
         $producto = Producto::findOrFail($id);
         return view("formEdicionProducto", compact('producto'));
     }
 
-    public function actualizar(Request $request, $producto){
+    public function actualizar(Request $request, $producto)
+    {
         $producto = Producto::find($producto);
 
         $producto->producto_nombre = $request->nombre;
@@ -69,7 +84,7 @@ class ProductosController extends Controller
 
         $productoJSON = json_encode($producto);
 
-    return $productoJSON;
+        return $productoJSON;
     }
 
     public function categoria()
@@ -92,13 +107,12 @@ class ProductosController extends Controller
     }
 
 
-    public function eliminar($id){
+    public function eliminar($id)
+    {
 
         $producto = Producto::findOrFail($id);
         $producto->delete();
 
         return redirect("/Productos");
-
     }
 }
- 

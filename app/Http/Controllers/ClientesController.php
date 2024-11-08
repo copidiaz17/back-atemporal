@@ -25,7 +25,7 @@ class ClientesController extends Controller
 
         $cliente = new User();
 
-
+        $data = $request->all();
 
         $cliente->type_id = 2;
 
@@ -38,9 +38,20 @@ class ClientesController extends Controller
         $cliente->telefono  = $request->input('cliente_telefono');
 
         $cliente->save();
-        
 
-       return response()->json(['status' => 'OK'], 200);
+
+        return response()->json(['status' => 'OK'], 200)
+            ->cookie(
+                'atemporal_token',          // Nombre de la cookie
+                $cliente->createToken('accessToken')->plainTextToken,   
+                60,   
+                '/',  
+                'localhost',
+                false, 
+                true, 
+                false, 
+                'Lax'   
+            );
     }
     public function ingresar()
     {
@@ -50,34 +61,34 @@ class ClientesController extends Controller
     {
         try {
             //code...
-            
+
             // $request->validate([
             //     'cliente_email' => 'required',
             //     'cliente_password' => 'required',
             // ]);
-    
+
             $cliente_email = $request->input('cliente_email');
             $cliente_password = $request->input('cliente_password');
             $auth = Auth::attempt([
                 'email' => $cliente_email,
                 'password' => $cliente_password,
             ]);
-            
+
             if ($auth) {
-                
+
                 $id = Auth::user()->id;
-                
+
                 $cliente = User::find($id);
-                
+
                 $cliente->tokens()->delete();
-                
+
                 return response()
-                ->json([
-                    'status' => 'OK',
-                    'token' => $cliente->createToken('accesToken')->plainTextToken,
-                    'bruno' => 'Soy bruno un genio crack, idolo mundial'
-                ])
-                ->cookie('atemporalCuki', $cliente->createToken('accesToken')->plainTextToken);
+                    ->json([
+                        'status' => 'OK',
+                        'token' => $cliente->createToken('accesToken')->plainTextToken,
+                        'bruno' => 'Soy bruno un genio crack, idolo mundial'
+                    ])
+                    ->cookie('AtemporalCookie', $cliente->createToken('accessToken')->plainTextToken);
             } else {
                 return response()->json([
                     'status' => 'KO'
@@ -88,10 +99,10 @@ class ClientesController extends Controller
             return response()->json([
                 'error' => $exception
             ]);
-        } 
+        }
     }
 
-    public function datos()
+    public function datos(Request $request)
     {
 
         $id = Auth::user()->id;
@@ -99,7 +110,7 @@ class ClientesController extends Controller
 
         return response()->json([
             'status'    => 'OK',
-            'cliente'   => $cliente
+            'cliente'   => $cliente,
         ]);
     }
 }
