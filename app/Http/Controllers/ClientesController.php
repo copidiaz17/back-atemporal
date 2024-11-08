@@ -48,7 +48,7 @@ class ClientesController extends Controller
                 '/',  
                 'localhost',
                 false, 
-                true, 
+                false, 
                 false, 
                 'Lax'   
             );

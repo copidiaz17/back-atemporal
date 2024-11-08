@@ -17,15 +17,15 @@ class ProductosController extends Controller
         //return $productos;
         //para enviarlo a la vista
         //return view("Productos", compact("productos"));
-        //  return response()->json($productos,200);
-        $tokens = PersonalAccessToken::all();
-        $user = $request->user;
-        return response()
-            ->json([
-                'user' => $request->user,
-                'tokens' => $tokens, 
-                'token' => $request->cookie('atemporal_token')
-            ]);
+         return response()->json($productos,200);
+        // $tokens = PersonalAccessToken::all();
+        // $user = $request->user;
+        // return response()
+        //     ->json([
+        //         'user' => $request->user,
+        //         'tokens' => $tokens, 
+        //         'token' => $request->cookie('atemporal_token')
+        //     ]);
     }
 
     public function crear()
