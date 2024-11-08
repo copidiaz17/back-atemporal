@@ -26,7 +26,7 @@ Route::get('/Clientes/Login', [ClientesController::class, "ingresar"]);
 Route::post('/Clientes/Login', [ClientesController::class, "login"]);
 
 Route::get('/Clientes/Datos', [ClientesController::class, "datos"])
-    ->middleware('auth:sanctum');
+    ->middleware('auth.verifyToken');
 
 
 Route::middleware('auth.verifyToken')->get('/Productos', [ProductosController::class, "index"]);

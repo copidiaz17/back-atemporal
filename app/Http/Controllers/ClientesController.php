@@ -23,35 +23,38 @@ class ClientesController extends Controller
     {
 
 
-        $cliente = new User();
+        try {
+            $cliente = new User();
 
-        $data = $request->all();
+            $data = $request->all();
 
-        $cliente->type_id = 2;
+            $cliente->type_id = 2;
 
-        $cliente->name    = $request->input('cliente_nombre');
-        $cliente->direccion = $request->input('cliente_direccion');
-        $cliente->localidad = $request->input('cliente_localidad');
-        $cliente->email     = $request->input('cliente_email');
+            $cliente->name    = $request->input('cliente_nombre');
+            $cliente->direccion = $request->input('cliente_direccion');
+            $cliente->localidad = $request->input('cliente_localidad');
+            $cliente->email     = $request->input('cliente_email');
 
-        $cliente->password  = $request->input('cliente_password');
-        $cliente->telefono  = $request->input('cliente_telefono');
+            $cliente->password  = $request->input('cliente_password');
+            $cliente->telefono  = $request->input('cliente_telefono');
+            $cliente->save();
 
-        $cliente->save();
 
-
-        return response()->json(['status' => 'OK'], 200)
-            ->cookie(
-                'atemporal_token',          // Nombre de la cookie
-                $cliente->createToken('accessToken')->plainTextToken,   
-                60,   
-                '/',  
-                'localhost',
-                false, 
-                false, 
-                false, 
-                'Lax'   
-            );
+            return response()->json(['status' => 'OK'], 200)
+                ->cookie(
+                    'atemporal_token',          // Nombre de la cookie
+                    $cliente->createToken('accessToken')->plainTextToken,   
+                    60,   
+                    '/',  
+                    'localhost',
+                    false, 
+                    true, 
+                    false, 
+                    'Lax'   
+                );
+        } catch (\Throwable $th) {
+            return response($th);
+        }
     }
     public function ingresar()
     {
@@ -105,8 +108,8 @@ class ClientesController extends Controller
     public function datos(Request $request)
     {
 
-        $id = Auth::user()->id;
-        $cliente = User::find($id);
+        $cliente = $request->user;
+        // $cliente = User::find($id);
 
         return response()->json([
             'status'    => 'OK',

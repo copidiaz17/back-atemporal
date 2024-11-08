@@ -25,6 +25,7 @@ class Cliente extends Authenticatable
     protected $hidden = [
         'cliente_contraseña',
         'remember_token',
+        'type_id'
     ];
 
     public function getAuthPassword()
