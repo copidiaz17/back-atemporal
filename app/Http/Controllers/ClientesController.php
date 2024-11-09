@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request\LoginRequest;
+use Illuminate\Support\Facades\Cookie;
 use PhpParser\Node\Stmt\TryCatch;
 
 class ClientesController extends Controller
@@ -119,6 +120,10 @@ class ClientesController extends Controller
 
 
     public function logout(Request $request) {
-        return response()->withoutCookie('atemporal_token', '/');
+        if ($request->hasCookie('atemporal_token')) {
+            // Eliminar la cookie de la respuesta
+            Cookie::queue(Cookie::forget('atemporal_token'));
+        }
+        return response();
     }
 }
