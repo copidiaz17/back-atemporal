@@ -119,6 +119,6 @@ class ClientesController extends Controller
 
 
     public function logout(Request $request) {
-        return response()->withoutCookie('atemporal_token');
+        return response()->withoutCookie('atemporal_token', '/');
     }
 }
