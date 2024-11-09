@@ -16,11 +16,7 @@ class EliminarCookie
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Eliminar cookie de la respuesta
-        // Se supone que la cookie se ha insertado previamente por el backend
-        // Especifica el nombre de la cookie que deseas eliminar
         if ($request->hasCookie('atemporal_token')) {
-            // Eliminar la cookie de la respuesta
             Cookie::queue(Cookie::forget('atemporal_token'));
         }
 

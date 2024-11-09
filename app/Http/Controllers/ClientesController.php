@@ -120,10 +120,7 @@ class ClientesController extends Controller
 
 
     public function logout(Request $request) {
-        if ($request->hasCookie('atemporal_token')) {
-            // Eliminar la cookie de la respuesta
-            Cookie::queue(Cookie::forget('atemporal_token'));
-        }
-        return response([], 200);
+        return response()->json(['status' => 'OK'], 200)
+                ->withoutCookie('atemporal_token');
     }
 }
