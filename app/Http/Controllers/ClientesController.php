@@ -64,12 +64,6 @@ class ClientesController extends Controller
     public function login(Request $request)
     {
         try {
-            //code...
-
-            // $request->validate([
-            //     'cliente_email' => 'required',
-            //     'cliente_password' => 'required',
-            // ]);
 
             $cliente_email = $request->input('cliente_email');
             $cliente_password = $request->input('cliente_password');
@@ -86,17 +80,18 @@ class ClientesController extends Controller
 
                 $cliente->tokens()->delete();
 
-                return response()
-                    ->json([
-                        'status' => 'OK',
-                        'token' => $cliente->createToken('accesToken')->plainTextToken,
-                        'bruno' => 'Soy bruno un genio crack, idolo mundial'
-                    ])
-                    ->cookie('AtemporalCookie', $cliente->createToken('accessToken')->plainTextToken);
-            } else {
-                return response()->json([
-                    'status' => 'KO'
-                ]);
+                return response()->json(['status' => 'OK'], 200)
+                ->cookie(
+                    'atemporal_token',          // Nombre de la cookie
+                    $cliente->createToken('accessToken')->plainTextToken,   
+                    60,   
+                    '/',  
+                    'localhost',
+                    false, 
+                    true, 
+                    false, 
+                    'Lax'   
+                );
             }
         } catch (Exception $exception) {
             //throw $th;
