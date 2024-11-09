@@ -124,6 +124,6 @@ class ClientesController extends Controller
             // Eliminar la cookie de la respuesta
             Cookie::queue(Cookie::forget('atemporal_token'));
         }
-        return response();
+        return response([], 200);
     }
 }
