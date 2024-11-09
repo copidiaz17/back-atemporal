@@ -28,6 +28,7 @@ Route::post('/Clientes/Login', [ClientesController::class, "login"]);
 Route::get('/Clientes/Datos', [ClientesController::class, "datos"])
     ->middleware('auth.verifyToken');
 
+Route::post('/Clientes/Logout', [ClientesController::class, 'logout'])->middleware('auth.verifyToken');
 
 Route::get('/Productos', [ProductosController::class, "index"]);
 
