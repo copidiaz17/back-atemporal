@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class venta extends Model
+class Venta extends Model
 {
     use HasFactory;
 
@@ -14,5 +14,15 @@ class venta extends Model
 
     public $incrementing = true; 
     protected $keyType = 'int'; 
+
+    protected $fillable  = [
+        'cliente_id',
+        'venta_fecha'
+    ];
+
+
+    public function cliente() {
+        return $this->belongsTo(User::class, 'cliente_id', 'id');
+    }
 
 }

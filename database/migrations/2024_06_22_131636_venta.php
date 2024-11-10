@@ -16,7 +16,7 @@ return new class extends Migration
             $table->date('venta_fecha');
             $table->unsignedBigInteger('cliente_id');
             $table->timestamps();  
-            $table->foreign('cliente_id')->references('id')->on('cliente');
+            $table->foreign('cliente_id')->references('id')->on('users');
 
         });
     }

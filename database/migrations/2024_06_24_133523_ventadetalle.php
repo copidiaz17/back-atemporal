@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('venta_detalle', function (Blueprint $table) {
+            $table->id();
             $table->unsignedBigInteger('producto_id');
             $table->unsignedBigInteger('venta_id');
-            $table->primary(['producto_id', 'venta_id']);
             $table->integer('venta_cantidad');
             $table->decimal('venta_precio', 10, 2);
             $table->decimal('venta_total', 10, 2);
@@ -30,5 +30,6 @@ return new class extends Migration
     public function down(): void
     {
         //
+        Schema::drop('venta_detalle');
     }
 };
