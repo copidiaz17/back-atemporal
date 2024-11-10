@@ -119,7 +119,7 @@ class ClientesController extends Controller
     }
 
     public function carrito(Request $request) {
-        $productos = $request['products'];
+        $productos = $request->all();
         return response()->json(['envio' => $productos], 200);
     }
 }
