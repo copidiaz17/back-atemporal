@@ -118,4 +118,8 @@ class ClientesController extends Controller
         return response()->json(['status' => 'OK'], 200)
                 ->withoutCookie('atemporal_token');
     }
+
+    public function carrito(Request $request) {
+        return response()->json(['envio' => 'ok'], 200);
+    }
 }
