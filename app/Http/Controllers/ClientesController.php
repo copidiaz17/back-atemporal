@@ -105,7 +105,6 @@ class ClientesController extends Controller
     {
 
         $cliente = $request->user;
-        // $cliente = User::find($id);
 
         return response()->json([
             'status'    => 'OK',
@@ -120,6 +119,7 @@ class ClientesController extends Controller
     }
 
     public function carrito(Request $request) {
-        return response()->json(['envio' => 'ok'], 200);
+        $productos = $request['products'];
+        return response()->json(['envio' => $productos], 200);
     }
 }
