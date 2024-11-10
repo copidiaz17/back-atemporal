@@ -24,10 +24,12 @@ class Producto extends Model
         'producto_precio',
         'categoria_id',
 
-       
     ];
 
-    
+
+    public function ventas() {
+        $this->hasMany(VentaDetalle::class, 'producto_id', 'id');
+    }
 
 
     

@@ -24,6 +24,7 @@ class VentaResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+
     public static function form(Form $form): Form
     {
         return $form
@@ -45,6 +46,8 @@ class VentaResource extends Resource
                 TextColumn::make('id'),
                 TextColumn::make('cliente.name'),
                 TextColumn::make('cliente.email'),
+                TextColumn::make('detalle_count')->counts('detalle')
+
             ])
             ->filters([
                 //

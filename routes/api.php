@@ -30,7 +30,9 @@ Route::get('/Clientes/Datos', [ClientesController::class, "datos"])
 
 Route::post('/Clientes/Logout', [ClientesController::class, 'logout'])->middleware('eliminar.cookie');
 
-Route::post('/Clientes/Carrito', [ClientesController::class, 'carrito']);
+Route::middleware('auth.verifyToken')->post('/Clientes/Carrito', [ClientesController::class, 'carrito'])
+    ;
+
 Route::get('/Productos', [ProductosController::class, "index"]);
 
 Route::get('/Productos/Categorias', [ProductosController::class, 'categoria']);
