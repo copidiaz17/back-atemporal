@@ -147,11 +147,11 @@ class ClientesController extends Controller
 
         // Agregamos cada precio al mensaje
         foreach ($venta->detalle as $detalle) {
-            $mensaje .= "- $detalle->venta_cantidad ".$detalle->producto->producto_nombre." - ".Number::format($detalle->producto->producto_precio, 2)." - $".$detalle->venta_total."\n";
+            $mensaje .= "- $detalle->venta_cantidad " . $detalle->producto->producto_nombre . " - $" . Number::format($detalle->producto->producto_precio, 2) . " x unidad - $" . $detalle->venta_total . "\n";
             $sumaTotal += $detalle->venta_total;
         }
 
-        $mensaje .= "Total estimado: $".Number::format($sumaTotal, 2)."\n";
+        $mensaje .= "Total estimado: $" . Number::format($sumaTotal, 2) . "\n";
 
         $mensaje .= "\nGracias!";
         $mensaje_url = rawurlencode($mensaje);
@@ -160,6 +160,5 @@ class ClientesController extends Controller
         $enlace_whatsapp = "https://wa.me/$numero?text=$mensaje_url";
 
         return response()->json($enlace_whatsapp, 200);
-
     }
 }
