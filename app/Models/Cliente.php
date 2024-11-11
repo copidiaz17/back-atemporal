@@ -11,15 +11,15 @@ class Cliente extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    protected $table = "cliente";
+    protected $table = "clientes";
 
     protected $fillable = [
         'cliente_nombre',
         'cliente_direccion',
-        'cliente_localidad', 
+        'cliente_localidad',
         'cliente_email',
         'cliente_contraseña',
-        'cliente_telefono', 
+        'cliente_telefono',
     ];
 
     protected $hidden = [
@@ -33,7 +33,7 @@ class Cliente extends Authenticatable
         return $this->cliente_contraseña;
     }
 
-    
+
     public function getAuthIdentifierName()
     {
         return 'cliente_email';

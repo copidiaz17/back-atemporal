@@ -6,7 +6,7 @@ use App\Http\Requests\LoginRecuest;
 use App\Models\cliente;
 use App\Models\User;
 use App\Models\Venta;
-use App\Models\VentaDetalle;
+use App\Models\DetalleVenta;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -133,13 +133,13 @@ class ClientesController extends Controller
         $venta->save();
         foreach ($productos as $producto) {
 
-            $ventaDetalle = new VentaDetalle();
-            $ventaDetalle->venta_id = $venta->id;
-            $ventaDetalle->venta_cantidad = $producto['cantidad'];
-            $ventaDetalle->producto_id = $producto['id'];
-            $ventaDetalle->venta_precio = $producto['producto_precio'];
-            $ventaDetalle->venta_total = $producto['producto_precio'] * $producto['cantidad'];
-            $ventaDetalle->save();
+            $detalleVenta = new DetalleVenta();
+            $detalleVenta->venta_id = $venta->id;
+            $detalleVenta->venta_cantidad = $producto['cantidad'];
+            $detalleVenta->producto_id = $producto['id'];
+            $detalleVenta->venta_precio = $producto['producto_precio'];
+            $detalleVenta->venta_total = $producto['producto_precio'] * $producto['cantidad'];
+            $detalleVenta->save();
         }
         $numero = '3855301127';
         $mensaje = "Hola, me gustaría que me prepares mi pedido.\n\nDetalles:\n\nListado de productos:\n";

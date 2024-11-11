@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Forms\Components\ImageInput;
 use App\Filament\Resources\ProductoResource\Pages;
 use App\Filament\Resources\ProductoResource\RelationManagers;
 use App\Models\Categoria;
@@ -12,15 +11,14 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use PhpParser\Node\Stmt\Label;
 
 class ProductoResource extends Resource
 {
     protected static ?string $model = Producto::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-shopping-bag';
+
+    protected static ?string $navigationGroup = 'Administración';
 
     public static function form(Form $form): Form
     {
@@ -63,18 +61,18 @@ class ProductoResource extends Resource
                     ->label('Nombre')
                     ->sortable(),
                 //Tables\Columns\TextColumn::make('producto_descripcion')
-                  //  ->searchable()
-                    //->label('Descripcion'),
+                //  ->searchable()
+                //->label('Descripcion'),
                 Tables\Columns\ImageColumn::make('producto_imagen')
                     ->label('Imagen')
                     ->circular(),
-                    //->disk('public')
-                    //->url(fn ($record) => $record->producto_imagen ? url('storage/images/productos/' . $record->producto_imagen) : url('images/productos/default-image.jpg')),
+                //->disk('public')
+                //->url(fn ($record) => $record->producto_imagen ? url('storage/images/productos/' . $record->producto_imagen) : url('images/productos/default-image.jpg')),
                 Tables\Columns\TextColumn::make('producto_precio')
                     ->numeric()
                     ->sortable()
                     ->label('Precio'),
-                    Tables\Columns\TextColumn::make('categoria.categoria_nombre')
+                Tables\Columns\TextColumn::make('categoria.categoria_nombre')
                     ->label('Categoría')
                     ->sortable()
             ])

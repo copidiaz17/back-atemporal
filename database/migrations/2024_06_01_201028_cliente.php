@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('cliente', function (Blueprint $table) {
+        Schema::create('clientes', function (Blueprint $table) {
             $table->id();
             $table->string('cliente_nombre');
             $table->string('cliente_direccion');
@@ -20,14 +20,13 @@ return new class extends Migration
             $table->string('cliente_contraseña');
             $table->String('cliente_telefono');
             $table->timestamps();
-        
-    });
+        });
     }
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('cliente');
+        Schema::dropIfExists('clientes');
     }
 };
