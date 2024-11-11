@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use Filament\Forms\Components\ImageInput;
 use App\Filament\Resources\ProductoResource\Pages;
 use App\Filament\Resources\ProductoResource\RelationManagers;
+use App\Models\Categoria;
 use App\Models\Producto;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -38,16 +39,17 @@ class ProductoResource extends Resource
                     ->label('Imagen del Producto')
                     ->required()
                     ->image()
-                    ->directory('images/productos')
+                    ->directory('storage/images/productos')
                     ->disk('public'),
                 Forms\Components\TextInput::make('producto_precio')
                     ->required()
                     ->numeric()
                     ->label('Precio'),
-                    Forms\Components\Select::make('categoria_id')
+                Forms\Components\Select::make('categoria_id')
                     ->label('Categoría')
                     ->required()
-                    ->relationship('categoria', 'categoria_nombre')
+                    ->options(Categoria::all()->pluck('categoria_nombre', 'id'))
+                    // ->relationship('categoria', 'categoria_nombre')
                     ->searchable(),
             ]);
     }
@@ -58,7 +60,8 @@ class ProductoResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('producto_nombre')
                     ->searchable()
-                    ->label('Nombre'),
+                    ->label('Nombre')
+                    ->sortable(),
                 //Tables\Columns\TextColumn::make('producto_descripcion')
                   //  ->searchable()
                     //->label('Descripcion'),
@@ -73,15 +76,7 @@ class ProductoResource extends Resource
                     ->label('Precio'),
                     Tables\Columns\TextColumn::make('categoria.categoria_nombre')
                     ->label('Categoría')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //

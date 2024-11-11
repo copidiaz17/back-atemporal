@@ -6,6 +6,7 @@ use App\Filament\Resources\VentaResource\Pages;
 use App\Filament\Resources\VentaResource\RelationManagers;
 use App\Models\User;
 use App\Models\Venta;
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
@@ -24,6 +25,7 @@ class VentaResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+
     public static function form(Form $form): Form
     {
         return $form
@@ -34,6 +36,8 @@ class VentaResource extends Resource
                     ->options(User::all()->pluck('name', 'id'))
                     ->searchable(),
                 DatePicker::make('venta_fecha')
+                    ->default(Carbon::now())
+                    ->disabledOn('edit')
             ]);
     }
 
@@ -45,6 +49,8 @@ class VentaResource extends Resource
                 TextColumn::make('id'),
                 TextColumn::make('cliente.name'),
                 TextColumn::make('cliente.email'),
+                TextColumn::make('detalle_count')->counts('detalle')
+
             ])
             ->filters([
                 //
