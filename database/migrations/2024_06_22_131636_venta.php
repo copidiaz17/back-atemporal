@@ -10,16 +10,15 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-    {
-        Schema::create('venta', function (Blueprint $table) {
-            $table->id();
-            $table->date('venta_fecha');
-            $table->unsignedBigInteger('cliente_id');
-            $table->timestamps();  
-            $table->foreign('cliente_id')->references('id')->on('users');
-
-        });
-    }
+{
+    Schema::create('venta', function (Blueprint $table) {
+        $table->id();
+        $table->date('venta_fecha');
+        $table->unsignedBigInteger('cliente_id');
+        $table->timestamps();
+        $table->foreign('cliente_id')->references('id')->on('users');
+    });
+}
     /**
      * Reverse the migrations.
      */
