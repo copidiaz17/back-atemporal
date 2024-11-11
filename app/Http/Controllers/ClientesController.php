@@ -157,7 +157,7 @@ class ClientesController extends Controller
         $mensaje_url = rawurlencode($mensaje);
 
 
-        $enlace_whatsapp = "https://wa.me/$numero?text=$mensaje";
+        $enlace_whatsapp = "https://wa.me/$numero?text=$mensaje_url";
 
         return response()->json($enlace_whatsapp, 200);
 
