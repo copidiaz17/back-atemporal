@@ -142,7 +142,7 @@ class ClientesController extends Controller
             $ventaDetalle->save();
         }
         $numero = '3855301127';
-        $mensaje = "Hola 😊, me gustaría que me prepares mi pedido.\n\nDetalles:\n\nListado de productos:\n";
+        $mensaje = "Hola, me gustaría que me prepares mi pedido.\n\nDetalles:\n\nListado de productos:\n";
         $sumaTotal = 0;
 
         // Agregamos cada precio al mensaje
