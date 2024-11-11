@@ -18,15 +18,15 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
 
-            $table->string('direccion')->nullable();            
+            $table->string('direccion')->nullable();
             $table->string('localidad')->nullable();
             $table->string('telefono')->nullable();
 
             $table->rememberToken();
             $table->unsignedBigInteger('type_id')->default(1);
 
-            $table->foreign('type_id')->references('id')->on('user_types')->onDelete('cascade');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

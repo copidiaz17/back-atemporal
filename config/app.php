@@ -1,9 +1,9 @@
 <?php
 
-    use Illuminate\Support\Facades\Facade;
-    use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Facade;
+use Illuminate\Support\ServiceProvider;
 
-    return [
+return [
 
     /*
     |--------------------------------------------------------------------------
@@ -16,7 +16,7 @@
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'Atemporal'),
 
     /*
     |--------------------------------------------------------------------------
@@ -83,7 +83,7 @@
     |
     */
 
-    'locale' => 'en',
+    'locale' => 'es',
 
     /*
     |--------------------------------------------------------------------------
@@ -169,7 +169,7 @@
         App\Providers\EventServiceProvider::class,
         App\Providers\Filament\AdminPanelProvider::class,
         App\Providers\RouteServiceProvider::class,
-        
+
     ])->toArray(),
 
     /*
@@ -183,8 +183,6 @@
     |
     */
 
-    'aliases' => Facade::defaultAliases()->merge([
-       
-    ])->toArray(),
+    'aliases' => Facade::defaultAliases()->merge([])->toArray(),
 
 ];
