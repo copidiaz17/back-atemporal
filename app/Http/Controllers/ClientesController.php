@@ -147,7 +147,7 @@ class ClientesController extends Controller
 
         // Agregamos cada precio al mensaje
         foreach ($venta->detalle as $detalle) {
-            $mensaje .= "- $detalle->venta_cantidad ".$detalle->producto->producto_nombre." - ".$detalle->producto->producto_precio." - $".$detalle->venta_total."\n";
+            $mensaje .= "- $detalle->venta_cantidad ".$detalle->producto->producto_nombre." - ".Number::format($detalle->producto->producto_precio, 2)." - $".$detalle->venta_total."\n";
             $sumaTotal += $detalle->venta_total;
         }
 
