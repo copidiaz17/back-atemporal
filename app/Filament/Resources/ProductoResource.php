@@ -8,6 +8,9 @@ use App\Filament\Resources\ProductoResource\RelationManagers;
 use App\Models\Categoria;
 use App\Models\Producto;
 use Filament\Forms;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Group;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -51,6 +54,14 @@ class ProductoResource extends Resource
                     ->options(Categoria::all()->pluck('categoria_nombre', 'id'))
                     // ->relationship('categoria', 'categoria_nombre')
                     ->searchable(),
+                Group::make()
+                    ->relationship('stock')
+                    ->schema([
+                        TextInput::make('cantidad')
+                            ->integer()
+                            ->default(0)
+                            ->label('Stock')
+                    ])
             ]);
     }
 

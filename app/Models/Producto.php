@@ -31,6 +31,9 @@ class Producto extends Model
         $this->hasMany(VentaDetalle::class, 'producto_id', 'id');
     }
 
+    public function stock() {
+        return $this->hasOne(Stock::class, 'producto_id', 'id');    
+    }
 
     
 }
