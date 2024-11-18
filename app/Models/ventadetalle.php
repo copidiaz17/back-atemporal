@@ -12,18 +12,6 @@ class ventadetalle extends Model
     protected $table = 'venta_detalle';
 
     protected $fillable = [
-<<<<<<< HEAD
-        'venta_id', 
-        'producto_id', 
-        'venta_cantidad', 
-        'venta_precio', 
-        'venta_total',
-    ];
-
-    public function venta()
-    {
-        return $this->belongsTo(Venta::class, 'venta_id');
-=======
         'producto_id',
         'venta_id',
         'venta_cantidad',
@@ -35,7 +23,6 @@ class ventadetalle extends Model
 
     public function venta() {
         return $this->belongsTo(Venta::class, 'venta_id', 'id');
->>>>>>> 8375618a4e22c8de21d81411ddce9638bc7268f5
     }
 
     public function producto()

@@ -4,11 +4,14 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\VentaResource\Pages;
 use App\Filament\Resources\VentaResource\RelationManagers;
+use App\Models\Producto;
 use App\Models\User;
 use App\Models\Venta;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -31,11 +34,49 @@ class VentaResource extends Resource
             ->schema([
                 Select::make('cliente_id')
                     ->label('Cliente')
+                    ->required()
                     ->options(User::all()->pluck('name', 'id'))
                     ->searchable(),
                 DatePicker::make('venta_fecha')
                     ->default(Carbon::now())
-                    ->disabledOn('edit')
+                    ->required()
+                    ->disabledOn('edit'),
+                Repeater::make('detalles')
+                    ->relationship('detalles')
+                    ->label('Productos')
+                    ->schema([
+                        Select::make('producto_id')
+                            ->label('Producto')
+                            ->options(Producto::all()->pluck('producto_nombre', 'id'))
+                            ->reactive()
+                            ->distinct()
+                            ->required()
+                            ->afterStateUpdated(
+                                fn(callable $set, $state) =>
+                                $set('venta_precio', Producto::find($state)?->producto_precio ?? 0)
+                            ),
+                        TextInput::make('venta_cantidad')
+                        ->required()
+                            ->label('Cantidad'),
+                        TextInput::make('venta_precio')
+                            ->label('Precio')
+                            ->numeric()
+                            ->disabled()
+                            ->dehydrated()
+                            ->required(),
+                        TextInput::make('venta_total')
+                            ->label('Total')
+                            ->numeric()
+                            ->disabled()
+                            ->dehydrated()
+                            ->required()
+                            ->afterStateUpdated(
+                                fn(callable $set, $get) =>
+                                $set('venta_total', $get('venta_cantidad') * $get('venta_precio'))
+                            )
+                    ])
+                    ->columnSpan(2)
+                    ->columns(2)
             ]);
     }
 
@@ -43,7 +84,7 @@ class VentaResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('id')->label('ID Venta'),
+                // TextColumn::make('id')->label('ID Venta'),
                 TextColumn::make('cliente.name')->label('Cliente'),
                 TextColumn::make('cliente.email')->label('Correo Electrónico'),
                 Tables\Columns\TextColumn::make('detalles')
@@ -59,16 +100,13 @@ class VentaResource extends Resource
                                 $detalle->venta_cantidad,
                                 $detalle->venta_total
                             );
-
-                            
                         })->implode('');
                     }),
-                    Tables\Columns\TextColumn::make('total_monto')
+                Tables\Columns\TextColumn::make('total_monto')
                     ->label('Monto Total')
                     ->formatStateUsing(function (Venta $record) {
                         // El total se calcula directamente sobre la colección de detalles
                         $totalMonto = $record->detalles->sum('venta_total');
-
                         // Verificación opcional de errores
                         if ($totalMonto === null) {
                             return 'Error al calcular el total';
