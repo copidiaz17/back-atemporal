@@ -12,36 +12,30 @@ class ventadetalle extends Model
     protected $table = 'venta_detalle';
 
     protected $fillable = [
-        'producto_id',
-        'venta_id',
-        'venta_cantidad',
-        'venta_precio',
-<<<<<<< HEAD
+        'venta_id', 
+        'producto_id', 
+        'venta_cantidad', 
+        'venta_precio', 
         'venta_total',
     ];
 
-    public function Producto()
-{
-    return $this->belongsTo(Producto::class);
-}
-
-public function venta()
-{
-    return $this->belongsTo(Venta::class);
-}
-
-=======
-        'venta_cantidad',
-        'venta_id',
-        'producto_id'
-    ];
-
-    public function venta() {
-        return $this->belongsTo(Venta::class, 'venta_id', 'id');
+    public function venta()
+    {
+        return $this->belongsTo(Venta::class, 'venta_id');
     }
 
-    public function producto() {
-        return $this->belongsTo(Producto::class, 'producto_id', 'id');
+    public function producto()
+    {
+        return $this->belongsTo(Producto::class, 'producto_id');
     }
->>>>>>> 6b97c3c25996e538f427cc68bef3432522ae4440
+
+    public function getVentaTotalAttribute()
+    {
+        return $this->venta_precio * $this->venta_cantidad;
+    }
+
+    public function setVentaTotalAttribute($value)
+    {
+        $this->attributes['venta_total'] = $this->venta_precio * $this->venta_cantidad;
+    }
 }

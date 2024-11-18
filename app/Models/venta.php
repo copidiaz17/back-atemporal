@@ -25,8 +25,14 @@ class venta extends Model
         return $this->belongsTo(User::class, 'cliente_id', 'id');
     }
 
-    public function detalle() {
+    public function detalles() {
+
         return $this->hasMany(VentaDetalle::class, 'venta_id', 'id');
+    }
+
+    public function getTotalAttribute()
+    {
+        return $this->detalles->sum('venta_total');
     }
 
 }

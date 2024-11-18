@@ -25,12 +25,10 @@ class VentaResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                //
                 Select::make('cliente_id')
                     ->label('Cliente')
                     ->options(User::all()->pluck('name', 'id'))
@@ -41,19 +39,43 @@ class VentaResource extends Resource
             ]);
     }
 
-    public static function table(Table $table): Table
+    public static function table(Tables\Table $table): Table
     {
         return $table
             ->columns([
-                //
-                TextColumn::make('id'),
-                TextColumn::make('cliente.name'),
-                TextColumn::make('cliente.email'),
-                TextColumn::make('detalle_count')->counts('detalle')
+                TextColumn::make('id')->label('ID Venta'),
+                TextColumn::make('cliente.name')->label('Cliente'),
+                TextColumn::make('cliente.email')->label('Correo Electrónico'),
+                Tables\Columns\TextColumn::make('detalles')
+                    ->label('Productos Vendidos')
+                    ->html()
+                    ->formatStateUsing(function (Venta $record) {
+                        // Asegúrate de cargar la relación 'detalles' para evitar consultas adicionales
+                        $record->load('detalles.producto');
+                        return $record->detalles->map(function ($detalle) {
+                            return sprintf(
+                                '<div>%s - Cantidad: %d - Total: $%.2f</div>',
+                                $detalle->producto->producto_nombre ?? 'Producto no encontrado',
+                                $detalle->venta_cantidad,
+                                $detalle->venta_total
+                            );
 
-            ])
-            ->filters([
-                //
+                            
+                        })->implode('');
+                    }),
+                    Tables\Columns\TextColumn::make('total_monto')
+                    ->label('Monto Total')
+                    ->formatStateUsing(function (Venta $record) {
+                        // El total se calcula directamente sobre la colección de detalles
+                        $totalMonto = $record->detalles->sum('venta_total');
+
+                        // Verificación opcional de errores
+                        if ($totalMonto === null) {
+                            return 'Error al calcular el total';
+                        }
+
+                        return '$' . number_format($totalMonto, 2);
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -72,6 +94,11 @@ class VentaResource extends Resource
         ];
     }
 
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->with('detalles'); // Carga eager de detalles
+    }
     public static function getPages(): array
     {
         return [
