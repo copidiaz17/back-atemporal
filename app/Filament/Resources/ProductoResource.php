@@ -22,6 +22,8 @@ use PhpParser\Node\Stmt\Label;
 class ProductoResource extends Resource
 {
     protected static ?string $model = Producto::class;
+    
+    protected static ?string $navigationGroup = 'Productos';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 

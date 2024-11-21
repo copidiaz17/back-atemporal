@@ -17,9 +17,11 @@ return new class extends Migration
             $table->string('producto_descripcion');
             $table->string('producto_imagen');
             $table->float('producto_precio');
-            $table->unsignedBigInteger('categoria_id'); 
+            $table->unsignedBigInteger('categoria_id')->nullable(); 
             $table->timestamps();  
-            $table->foreign('categoria_id')->references('id')->on('categoria');
+            $table->foreign('categoria_id')->references('id')->on('categoria')->onDelete('cascade');
+
+            $table->softDeletes();
 
         });
     }

@@ -25,6 +25,10 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class VentaResource extends Resource
 {
     protected static ?string $model = Venta::class;
+    
+    protected static ?string $navigationGroup = 'Ventas';
+    protected static ?string $navigationLabel = 'Ventas';
+
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -56,7 +60,8 @@ class VentaResource extends Resource
                                 $set('venta_precio', Producto::find($state)?->producto_precio ?? 0)
                             ),
                         TextInput::make('venta_cantidad')
-                        ->required()
+                            ->required()
+                            ->reactive()
                             ->label('Cantidad'),
                         TextInput::make('venta_precio')
                             ->label('Precio')
@@ -69,7 +74,7 @@ class VentaResource extends Resource
                             ->numeric()
                             ->disabled()
                             ->dehydrated()
-                            ->required()
+                            // ->required()
                             ->afterStateUpdated(
                                 fn(callable $set, $get) =>
                                 $set('venta_total', $get('venta_cantidad') * $get('venta_precio'))
@@ -84,7 +89,7 @@ class VentaResource extends Resource
     {
         return $table
             ->columns([
-                 TextColumn::make('id')->label('ID Venta'),
+                TextColumn::make('id')->label('ID Venta'),
                 TextColumn::make('cliente.name')->label('Cliente'),
                 TextColumn::make('cliente.email')->label('Correo Electrónico'),
                 Tables\Columns\TextColumn::make('detalles')
@@ -102,20 +107,30 @@ class VentaResource extends Resource
                             );
                         })->implode('');
                     }),
-                    Tables\Columns\TextColumn::make('total_monto')
-    ->label('Monto Total')
-    ->formatStateUsing(function (Venta $record) {
-        // Asegúrate de cargar los detalles y sus productos
-        $record->loadMissing('detalles');
-
-        // Itera sobre los detalles y suma los valores de venta_total
-        $totalMonto = $record->detalles->reduce(function ($carry, $detalle) {
-            return $carry + ($detalle->venta_total ?? 0);
-        }, 0);
-
-        // Devuelve el monto total formateado
-        return '$' . number_format($totalMonto, 2);
-    }),
+                Tables\Columns\TextColumn::make('detalles.venta_total')
+                    ->label('Monto Total')
+                    ->html()
+                    ->formatStateUsing(function (Venta $record) {
+                        // Asegúralte de cargar los detalles y sus productos
+                        // $record->load('detalles.producto');
+                        // return $record->detalles->map(function ($detalle) {
+                        //     return sprintf(
+                        //         '<div>%s - Cantidad: %d - Total: $%.2f</div>',
+                        //         $detalle->producto->producto_nombre ?? 'Producto no encontrado',
+                        //         $detalle->venta_cantidad,
+                        //         $detalle->venta_total
+                        //     );
+                        // })->implode('');
+                        $record->load('detalles');
+                        // dd($record->detalles);
+                        // Itera sobre los detalles y suma los valores de venta_total
+                        $totalMonto = $record->detalles->reduce(function ($carry, $detalle) {
+                            return $carry + ($detalle->venta_total ?? 0);
+                        }, 0);
+                        return sprintf('<div>$%.2f</div>', $totalMonto);
+                        
+                        // Devuelve el monto total formateado
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -135,18 +150,18 @@ class VentaResource extends Resource
     }
 
     public function getMontoTotalAttribute()
-{
-    // Carga los detalles si no están ya cargados
-    $this->loadMissing('detalles');
-    
-    // Suma los totales de los detalles
-    return $this->detalles->sum(fn ($detalle) => $detalle->venta_total ?? 0);
-}
+    {
+        // Carga los detalles si no están ya cargados
+        $this->loadMissing('detalles');
+
+        // Suma los totales de los detalles
+        return $this->detalles->sum(fn($detalle) => $detalle->venta_total ?? 0);
+    }
 
     public static function getEloquentQuery(): Builder
-{
-    return parent::getEloquentQuery()->with('detalles');
-}
+    {
+        return parent::getEloquentQuery()->with('detalles');
+    }
     public static function getPages(): array
     {
         return [

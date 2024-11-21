@@ -14,9 +14,11 @@ return new class extends Migration
     Schema::create('venta', function (Blueprint $table) {
         $table->id();
         $table->date('venta_fecha');
-        $table->unsignedBigInteger('cliente_id');
+        $table->unsignedBigInteger('cliente_id')->nullable();
+        $table->foreign('cliente_id')->references('id')->on('users')->onDelete('cascade');
         $table->timestamps();
-        $table->foreign('cliente_id')->references('id')->on('users');
+
+        $table->softDeletes();
     });
 }
     /**

@@ -13,14 +13,15 @@ return new class extends Migration
     {
         Schema::create('venta_detalle', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('producto_id');
-            $table->unsignedBigInteger('venta_id');
+            $table->unsignedBigInteger('producto_id')->nullable();
+            $table->unsignedBigInteger('venta_id')->nullable();
             $table->integer('venta_cantidad');
             $table->decimal('venta_precio', 10, 2);
             $table->decimal('venta_total', 10, 2);
-            $table->foreign('producto_id')->references('id')->on('producto');
-            $table->foreign('venta_id')->references('id')->on('venta');
+            $table->foreign('producto_id')->references('id')->on('producto')->onDelete('cascade');
+            $table->foreign('venta_id')->references('id')->on('venta')->onDelete('cascade');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
