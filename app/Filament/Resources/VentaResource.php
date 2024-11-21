@@ -6,7 +6,7 @@ use App\Filament\Resources\VentaResource\Pages;
 use App\Filament\Resources\VentaResource\RelationManagers;
 use App\Models\Producto;
 use App\Models\User;
-use App\Models\Venta;
+use App\Models\venta;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
@@ -84,7 +84,7 @@ class VentaResource extends Resource
     {
         return $table
             ->columns([
-                // TextColumn::make('id')->label('ID Venta'),
+                 TextColumn::make('id')->label('ID Venta'),
                 TextColumn::make('cliente.name')->label('Cliente'),
                 TextColumn::make('cliente.email')->label('Correo Electrónico'),
                 Tables\Columns\TextColumn::make('detalles')
@@ -102,18 +102,20 @@ class VentaResource extends Resource
                             );
                         })->implode('');
                     }),
-                Tables\Columns\TextColumn::make('total_monto')
-                    ->label('Monto Total')
-                    ->formatStateUsing(function (Venta $record) {
-                        // El total se calcula directamente sobre la colección de detalles
-                        $totalMonto = $record->detalles->sum('venta_total');
-                        // Verificación opcional de errores
-                        if ($totalMonto === null) {
-                            return 'Error al calcular el total';
-                        }
+                    Tables\Columns\TextColumn::make('total_monto')
+    ->label('Monto Total')
+    ->formatStateUsing(function (Venta $record) {
+        // Asegúrate de cargar los detalles y sus productos
+        $record->loadMissing('detalles');
 
-                        return '$' . number_format($totalMonto, 2);
-                    }),
+        // Itera sobre los detalles y suma los valores de venta_total
+        $totalMonto = $record->detalles->reduce(function ($carry, $detalle) {
+            return $carry + ($detalle->venta_total ?? 0);
+        }, 0);
+
+        // Devuelve el monto total formateado
+        return '$' . number_format($totalMonto, 2);
+    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -132,11 +134,19 @@ class VentaResource extends Resource
         ];
     }
 
+    public function getMontoTotalAttribute()
+{
+    // Carga los detalles si no están ya cargados
+    $this->loadMissing('detalles');
+    
+    // Suma los totales de los detalles
+    return $this->detalles->sum(fn ($detalle) => $detalle->venta_total ?? 0);
+}
+
     public static function getEloquentQuery(): Builder
-    {
-        return parent::getEloquentQuery()
-            ->with('detalles'); // Carga eager de detalles
-    }
+{
+    return parent::getEloquentQuery()->with('detalles');
+}
     public static function getPages(): array
     {
         return [

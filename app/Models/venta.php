@@ -9,30 +9,33 @@ class venta extends Model
 {
     use HasFactory;
 
-    protected $table = 'venta'; 
+    protected $table = 'venta';
     protected $primaryKey = 'id';
 
-    public $incrementing = true; 
-    protected $keyType = 'int'; 
+    public $incrementing = true;
+    protected $keyType = 'int';
 
-    protected $fillable  = [
+    protected $fillable = [
         'cliente_id',
-        'venta_fecha'
+        'venta_fecha',
     ];
 
-
-    public function cliente() {
+    // Relación con el modelo User
+    public function cliente()
+    {
         return $this->belongsTo(User::class, 'cliente_id', 'id');
     }
 
-    public function detalles() {
-
+    // Relación con detalles de la venta
+    public function detalles()
+    {
         return $this->hasMany(VentaDetalle::class, 'venta_id', 'id');
     }
 
+    // Accessor para calcular el monto total de la venta
     public function getTotalAttribute()
     {
-        return $this->detalles->sum('venta_total');
+        $this->loadMissing('detalles'); // Asegura que los detalles estén cargados
+        return $this->detalles->sum(fn($detalle) => $detalle->venta_total ?? 0);
     }
-
 }
