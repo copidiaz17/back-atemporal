@@ -28,7 +28,7 @@ class ventadetalle extends Model
     // Relación con el producto
     public function producto()
     {
-        return $this->belongsTo(Producto::class, 'producto_id');
+        return $this->belongsTo(Producto::class, 'producto_id', 'id'  );
     }
 
     // Accessor para calcular el total del detalle (cantidad * precio)
@@ -42,6 +42,41 @@ class ventadetalle extends Model
     {
         static::saving(function ($detalle) {
             $detalle->venta_total = $detalle->venta_precio * $detalle->venta_cantidad;
+        });
+    }
+
+    protected static function boot()
+    {
+        
+        parent::boot();
+
+        // Descontar stock al crear un detalle
+        static::created(function ($detalle) {
+            $producto = $detalle->producto;
+            if ($producto->stock) {
+                $producto->stock->cantidad -= $detalle->venta_cantidad;
+                $producto->stock->save();
+            }
+        });
+
+        // Revertir stock al eliminar un detalle
+        static::deleted(function ($detalle) {
+            $producto = $detalle->producto;
+            if ($producto->stock) {
+                $producto->stock->cantidad += $detalle->venta_cantidad;
+                $producto->stock->save();
+            }
+        });
+
+        // Actualizar stock al modificar un detalle
+        static::updated(function ($detalle) {
+            $producto = $detalle->producto;
+            if ($producto->stock) {
+                // Ajusta el stock en base al cambio en la cantidad
+                $diferencia = $detalle->getOriginal('venta_cantidad') - $detalle->venta_cantidad;
+                $producto->stock->cantidad += $diferencia;
+                $producto->stock->save();
+            }
         });
     }
 }
