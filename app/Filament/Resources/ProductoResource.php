@@ -44,7 +44,7 @@ class ProductoResource extends Resource
                     ->label('Imagen del Producto')
                     ->required()
                     ->image()
-                    ->directory('images/productos')
+                    ->directory('storage/images/productos')
                     ->disk('public'),
                 Forms\Components\TextInput::make('producto_precio')
                     ->required()
