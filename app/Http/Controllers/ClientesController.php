@@ -2,20 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\LoginRecuest;
-use App\Models\cliente;
 use App\Models\User;
 use App\Models\Venta;
 use App\Models\VentaDetalle;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request\LoginRequest;
-use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Number;
-use PhpParser\Node\Stmt\TryCatch;
 
 class ClientesController extends Controller
 {

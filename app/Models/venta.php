@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Venta extends Model
 {
-    // A
     use HasFactory;
 
     protected $table = 'venta';
