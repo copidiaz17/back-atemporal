@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Number;
 
 class ClientesController extends Controller
@@ -22,81 +23,73 @@ class ClientesController extends Controller
     {
 
 
-        try {
-            $cliente = new User();
+        $request->validate([
+            'cliente_nombre' => ['required', 'max:255'],
+            'cliente_direccion' => ['required', 'max:255'],
+            'cliente_localidad' => ['required', 'max:255'],
+            'cliente_email' => ['required', 'max:255', 'email', 'unique:cliente,cliente_email'],
+            'cliente_password' => ['required', 'max:255'],
+            'cliente_telefono' => ['required', 'max:255'],
+        ]);
+        
+        $cliente = new User();
+        $cliente->type_id = 2;
+        $cliente->name    = $request->input('cliente_nombre');
+        $cliente->direccion = $request->input('cliente_direccion');
+        $cliente->localidad = $request->input('cliente_localidad');
+        $cliente->email     = $request->input('cliente_email');
+        $cliente->password  = $request->input('cliente_password');
+        $cliente->telefono  = $request->input('cliente_telefono');
+        $cliente->save();
 
-            $data = $request->all();
-
-            $cliente->type_id = 2;
-
-            $cliente->name    = $request->input('cliente_nombre');
-            $cliente->direccion = $request->input('cliente_direccion');
-            $cliente->localidad = $request->input('cliente_localidad');
-            $cliente->email     = $request->input('cliente_email');
-
-            $cliente->password  = $request->input('cliente_password');
-            $cliente->telefono  = $request->input('cliente_telefono');
-            $cliente->save();
-
-
-            return response()->json(['status' => 'OK'], 200)
-                ->cookie(
-                    'atemporal_token',          // Nombre de la cookie
-                    $cliente->createToken('accessToken')->plainTextToken,
-                    60,
-                    '/',
-                    config('session.domain'),
-                    false,
-                    true,
-                    false,
-                    'Lax'
-                );
-        } catch (\Throwable $th) {
-            return response($th);
-        }
+        return response()->json(['status' => 'OK'], 200)
+            ->cookie(
+                'atemporal_token',          // Nombre de la cookie
+                $cliente->createToken('accessToken')->plainTextToken,
+                60,
+                '/',
+                config('session.domain'),
+                false,
+                true,
+                false,
+                'Lax'
+            );
     }
     public function ingresar()
     {
         return view("Login");
     }
+
     public function login(Request $request)
     {
-        try {
+        $cliente_email = $request->input('cliente_email');
+        $cliente_password = $request->input('cliente_password');
+        $auth = Auth::attempt([
+            'email' => $cliente_email,
+            'password' => $cliente_password,
+        ]);
 
-            $cliente_email = $request->input('cliente_email');
-            $cliente_password = $request->input('cliente_password');
-            $auth = Auth::attempt([
-                'email' => $cliente_email,
-                'password' => $cliente_password,
-            ]);
-
-            if ($auth) {
-
-                $id = Auth::user()->id;
-
-                $cliente = User::find($id);
-
-                $cliente->tokens()->delete();
-
-                return response()->json(['status' => 'OK'], 200)
-                    ->cookie(
-                        'atemporal_token',          // Nombre de la cookie
-                        $cliente->createToken('accessToken')->plainTextToken,
-                        60,
-                        '/',
-                        config('session.domain'),
-                        false,
-                        true,
-                        false,
-                        'Lax'
-                    );
-            }
-        } catch (Exception $exception) {
-            //throw $th;
-            return response()->json([
-                'error' => $exception
-            ]);
+        if (!$auth) {
+            abort(422);
         }
+        $id = Auth::user()->id;
+
+        $cliente = User::find($id);
+
+        $cliente->tokens()->delete();
+
+        return response()->json(['status' => 'OK'], 200)
+            ->cookie(
+                'atemporal_token',          // Nombre de la cookie
+                $cliente->createToken('accessToken')->plainTextToken,
+                60,
+                '/',
+                config('session.domain'),
+                false,
+                true,
+                false,
+                'Lax'
+            );
     }
 
     public function datos(Request $request)
@@ -125,6 +118,7 @@ class ClientesController extends Controller
         $venta->venta_fecha = Carbon::now();
         $venta->cliente_id = $request->user->id;
         $venta->save();
+
         foreach ($productos as $producto) {
 
             $ventaDetalle = new VentaDetalle();
