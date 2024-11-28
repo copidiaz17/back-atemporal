@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class venta extends Model
+class Venta extends Model
 {
     use HasFactory;
 
@@ -38,4 +38,22 @@ class venta extends Model
         $this->loadMissing('detalles'); // Asegura que los detalles estén cargados
         return $this->detalles->sum(fn($detalle) => $detalle->venta_total ?? 0);
     }
+
+    protected static function booted()
+{
+    static::created(function ($ventaDetalle) {
+        $producto = Producto::find($ventaDetalle->producto_id);
+
+        if ($producto) {
+            $nuevoStock = $producto->producto_cantidad - $ventaDetalle->venta_cantidad;
+
+            if ($nuevoStock < 0) {
+                throw new \Exception("No hay suficiente stock disponible para el producto: {$producto->producto_nombre}");
+            }
+
+            $producto->update(['producto_cantidad' => $nuevoStock]);
+        }
+    });
+}
+
 }

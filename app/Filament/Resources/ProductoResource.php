@@ -56,14 +56,10 @@ class ProductoResource extends Resource
                     ->options(Categoria::all()->pluck('categoria_nombre', 'id'))
                     // ->relationship('categoria', 'categoria_nombre')
                     ->searchable(),
-                Group::make()
-                    ->relationship('stock')
-                    ->schema([
-                        TextInput::make('cantidad')
-                            ->integer()
-                            ->default(0)
-                            ->label('Stock')
-                    ])
+                    Forms\Components\TextInput::make('producto_cantidad')
+                    ->required()
+                    ->integer()
+                    ->label('Cantidad'),
             ]);
     }
 
@@ -88,7 +84,11 @@ class ProductoResource extends Resource
                     ->circular(),
                     //->disk('public')
                     //->url(fn ($record) => $record->producto_imagen ? url('storage/images/productos/' . $record->producto_imagen) : url('images/productos/default-image.jpg')),
-                Tables\Columns\TextColumn::make('producto_precio')
+                    Tables\Columns\TextColumn::make('producto_cantidad')
+                    ->label('Cantidad')
+    ->sortable(),
+                
+                    Tables\Columns\TextColumn::make('producto_precio')
                     ->numeric()
                     ->sortable()
                     ->label('Precio'),

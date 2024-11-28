@@ -17,19 +17,19 @@ return new class extends Migration
             $table->string('producto_descripcion');
             $table->string('producto_imagen');
             $table->float('producto_precio');
-            $table->unsignedBigInteger('categoria_id')->nullable(); 
-            $table->timestamps();  
+            $table->unsignedBigInteger('categoria_id')->nullable();
+            $table->integer('producto_cantidad')->default(0); 
+            $table->timestamps();
             $table->foreign('categoria_id')->references('id')->on('categoria')->onDelete('cascade');
-
             $table->softDeletes();
-
         });
     }
+
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists("producto");
+        Schema::dropIfExists('producto');
     }
 };

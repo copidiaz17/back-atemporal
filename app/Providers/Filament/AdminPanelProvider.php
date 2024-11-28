@@ -2,9 +2,14 @@
 
 namespace App\Providers\Filament;
 
+<<<<<<< HEAD
 
 
 
+=======
+use App\Filament\Resources\VentaResource;
+use App\Filament\Resources\VentaResource\Widgets\VentasResumen;
+>>>>>>> 892bd0f4039340ee224efd940b2bd230a06195b8
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -41,9 +46,16 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
+<<<<<<< HEAD
                
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
+=======
+                // Widgets\AccountWidget::class,
+                // Widgets\FilamentInfoWidget::class,
+                VentasResumen::class
+
+>>>>>>> 892bd0f4039340ee224efd940b2bd230a06195b8
             ])
             ->middleware([
                 EncryptCookies::class,

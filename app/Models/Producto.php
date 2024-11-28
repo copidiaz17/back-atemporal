@@ -13,9 +13,7 @@ class Producto extends Model
 
     public $incrementing = true; 
     protected $keyType = 'int'; 
-    public function categoria(){
-      return $this->belongsTo(Categoria::class, 'categoria_id');
-}
+    
 
     protected $fillable = [
         'producto_nombre',
@@ -23,16 +21,21 @@ class Producto extends Model
         'producto_imagen', 
         'producto_precio',
         'categoria_id',
+        'producto_cantidad',
+
+        
 
     ];
 
 
-    public function ventas() {
-        $this->hasMany(VentaDetalle::class, 'producto_id', 'id');
+    public function categoria(){ 
+        return $this->belongsTo(Categoria::class, 'categoria_id'); 
+    } 
+    public function ventas() { 
+        return $this->hasMany(VentaDetalle::class, 'producto_id', 'id'); 
     }
-
-    public function stock() {
-        return $this->hasOne(Stock::class, 'producto_id', 'id');    
+     public function stock() { 
+        return $this->hasOne(Stock::class, 'producto_id', 'id'); 
     }
 
     
