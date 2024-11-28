@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ventadetalle extends Model
+class VentaDetalle extends Model
 {
     use HasFactory;
 
@@ -28,7 +28,7 @@ class ventadetalle extends Model
     // Relación con el producto
     public function producto()
     {
-        return $this->belongsTo(Producto::class, 'producto_id', 'id'  );
+        return $this->belongsTo(Producto::class, 'producto_id', 'id');
     }
 
     // Accessor para calcular el total del detalle (cantidad * precio)
@@ -47,7 +47,6 @@ class ventadetalle extends Model
 
     protected static function boot()
     {
-<<<<<<< HEAD
         parent::boot();
 
         // Antes de crear un detalle: validar que hay stock suficiente
@@ -58,11 +57,6 @@ class ventadetalle extends Model
             }
         });
 
-=======
-        
-        parent::boot();
-
->>>>>>> 892bd0f4039340ee224efd940b2bd230a06195b8
         // Descontar stock al crear un detalle
         static::created(function ($detalle) {
             $producto = $detalle->producto;
@@ -81,7 +75,6 @@ class ventadetalle extends Model
             }
         });
 
-<<<<<<< HEAD
         // Validar y ajustar stock al modificar un detalle
         static::updating(function ($detalle) {
             $producto = $detalle->producto;
@@ -105,14 +98,6 @@ class ventadetalle extends Model
                 $diferencia = $cantidadOriginal - $nuevaCantidad;
 
                 // Ajustar el stock según la diferencia
-=======
-        // Actualizar stock al modificar un detalle
-        static::updated(function ($detalle) {
-            $producto = $detalle->producto;
-            if ($producto->stock) {
-                // Ajusta el stock en base al cambio en la cantidad
-                $diferencia = $detalle->getOriginal('venta_cantidad') - $detalle->venta_cantidad;
->>>>>>> 892bd0f4039340ee224efd940b2bd230a06195b8
                 $producto->stock->cantidad += $diferencia;
                 $producto->stock->save();
             }
