@@ -134,7 +134,7 @@ class ClientesController extends Controller
         $sumaTotal = 0;
 
         // Agregamos cada precio al mensaje
-        foreach ($venta->detalle as $detalle) {
+        foreach ($venta->detalles as $detalle) {
             $mensaje .= "- $detalle->venta_cantidad " . $detalle->producto->producto_nombre . " - $" . Number::format($detalle->producto->producto_precio, 2) . " x unidad - $" . $detalle->venta_total . "\n";
             $sumaTotal += $detalle->venta_total;
         }
