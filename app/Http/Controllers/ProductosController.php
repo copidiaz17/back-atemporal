@@ -96,14 +96,15 @@ class ProductosController extends Controller
         return view('categorias', compact('categorias'));
     }
 
-    public function prod_categoria($categoria_id)
+    public function prod_categoria($categoria)
     {
         // Obtener la categoría específica junto con sus productos
-        $categoria = Categoria::findOrFail($categoria_id);
+        $categoria = Categoria::where('categoria_nombre', 'like', $categoria);
         $productos = $categoria->productos;
 
         // Devolver la vista con los productos de la categoría
-        return view('prodxCategoria', compact('categoria', 'productos'));
+        // return view('prodxCategoria', compact('categoria', 'productos'));
+        return response()->json($productos);
     }
 
 
