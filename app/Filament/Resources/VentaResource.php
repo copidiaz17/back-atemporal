@@ -46,6 +46,7 @@ class VentaResource extends Resource
                             ->options(Producto::all()->pluck('producto_nombre', 'id'))
                             ->reactive()
                             ->required()
+                            ->distinct()
                             ->afterStateUpdated(function (callable $set, $state) {
                                 $producto = Producto::find($state);
                                 $set('venta_precio', $producto?->producto_precio ?? 0);
@@ -61,6 +62,7 @@ class VentaResource extends Resource
                         
                                 if ($state > $stockDisponible) {
                                     $set('venta_cantidad', $stockDisponible);
+                                    
                                     // throw new \Exception("La cantidad excede el stock disponible: {$stockDisponible}");
                                 }
                             }),
