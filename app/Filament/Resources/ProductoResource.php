@@ -75,6 +75,11 @@ class ProductoResource extends Resource
                     ->searchable()
                     ->label('Nombre')
                     ->sortable(),
+                    Tables\Columns\TextColumn::make('stock.cantidad')
+                ->label('Cantidad')
+                ->sortable()
+                ->default(0)
+                ->getStateUsing(fn ($record) => $record->stock?->cantidad ?? 0),
                 //Tables\Columns\TextColumn::make('producto_descripcion')
                   //  ->searchable()
                     //->label('Descripcion'),
