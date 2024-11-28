@@ -99,7 +99,7 @@ class ProductosController extends Controller
     public function prod_categoria($categoria)
     {
         // Obtener la categoría específica junto con sus productos
-        $categoria = Categoria::where('categoria_nombre', 'like', $categoria);
+        $categoria = Categoria::where('categoria_nombre', 'like', $categoria)->with('productos')->get();
         $productos = $categoria->productos;
 
         // Devolver la vista con los productos de la categoría
