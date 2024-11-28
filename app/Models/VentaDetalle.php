@@ -50,12 +50,12 @@ class VentaDetalle extends Model
         parent::boot();
 
         // Antes de crear un detalle: validar que hay stock suficiente
-        static::creating(function ($detalle) {
-            $producto = $detalle->producto;
-            if ($producto->stock && $detalle->venta_cantidad > $producto->stock->cantidad) {
-                throw new \Exception("No hay suficiente stock para el producto: {$producto->producto_nombre}.");
-            }
-        });
+        // static::creating(function ($detalle) {
+        //     $producto = $detalle->producto;
+        //     if ($producto->stock && $detalle->venta_cantidad > $producto->stock->cantidad) {
+        //         throw new \Exception("No hay suficiente stock para el producto: {$producto->producto_nombre}.");
+        //     }
+        // });
 
         // Descontar stock al crear un detalle
         static::created(function ($detalle) {
@@ -84,9 +84,9 @@ class VentaDetalle extends Model
                 $diferencia = $nuevaCantidad - $cantidadOriginal;
 
                 // Verificar si el stock actual permite la actualización
-                if ($diferencia > 0 && $diferencia > $producto->stock->cantidad) {
-                    throw new \Exception("No hay suficiente stock para actualizar la venta del producto: {$producto->producto_nombre}.");
-                }
+                // if ($diferencia > 0 && $diferencia > $producto->stock->cantidad) {
+                //     throw new \Exception("No hay suficiente stock para actualizar la venta del producto: {$producto->producto_nombre}.");
+                // }
             }
         });
 

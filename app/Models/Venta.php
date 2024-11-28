@@ -44,15 +44,15 @@ class Venta extends Model
     static::created(function ($ventaDetalle) {
         $producto = Producto::find($ventaDetalle->producto_id);
 
-        if ($producto) {
-            $nuevoStock = $producto->producto_cantidad - $ventaDetalle->venta_cantidad;
+        // if ($producto) {
+        //     $nuevoStock = $producto->producto_cantidad - $ventaDetalle->venta_cantidad;
 
-            if ($nuevoStock < 0) {
-                throw new \Exception("No hay suficiente stock disponible para el producto: {$producto->producto_nombre}");
-            }
+        //     if ($nuevoStock < 0) {
+        //         throw new \Exception("No hay suficiente stock disponible para el producto: {$producto->producto_nombre}");
+        //     }
 
-            $producto->update(['producto_cantidad' => $nuevoStock]);
-        }
+        //     $producto->update(['producto_cantidad' => $nuevoStock]);
+        // }
     });
 }
 
