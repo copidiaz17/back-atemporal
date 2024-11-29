@@ -1,19 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-
+use App\Enums\UserType;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable implements FilamentUser
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens;
+    use HasFactory;
+    use Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +31,7 @@ class User extends Authenticatable implements FilamentUser
         'direccion',
         'localidad',
         'telefono',
-        'type_id'
+        'type',
     ];
 
     /**
@@ -48,16 +52,16 @@ class User extends Authenticatable implements FilamentUser
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'type' => UserType::class,
     ];
 
-    public function ventas() {
+    public function ventas(): HasMany
+    {
         return $this->hasMany(Venta::class, 'cliente_id', 'id');
     }
 
-
-    
-    public function canAccessPanel(Panel $panel): bool{
-        return $this->type_id == 1;
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $this->type === UserType::Admin;
     }
-
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserType;
 use App\Models\User;
 use App\Models\Venta;
 use App\Models\VentaDetalle;
@@ -29,7 +30,7 @@ class ClientesController extends Controller
         ]);
 
         $cliente = new User();
-        $cliente->type_id = 2;
+        $cliente->type = UserType::Client;
         $cliente->name    = $data['cliente_nombre'];
         $cliente->direccion = $data['cliente_direccion'];
         $cliente->localidad = $data['cliente_localidad'];

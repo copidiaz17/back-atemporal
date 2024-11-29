@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class VentaDetalle extends Model
 {
@@ -19,35 +22,28 @@ class VentaDetalle extends Model
         'venta_total',
     ];
 
-    // Relación con la venta
-    public function venta()
+    public function venta(): BelongsTo
     {
-        return $this->belongsTo(Venta::class, 'venta_id', 'id');
+        return $this->belongsTo(Venta::class);
     }
 
-    // Relación con el producto
-    public function producto()
+    public function producto(): BelongsTo
     {
-        return $this->belongsTo(Producto::class, 'producto_id', 'id');
+        return $this->belongsTo(Producto::class);
     }
 
-    // Accessor para calcular el total del detalle (cantidad * precio)
     public function getCalculatedTotalAttribute()
     {
         return $this->venta_precio * $this->venta_cantidad;
     }
 
-    // Evento para actualizar el total antes de guardar
-    protected static function booted()
-    {
-        static::saving(function ($detalle) {
-            $detalle->venta_total = $detalle->venta_precio * $detalle->venta_cantidad;
-        });
-    }
-
     protected static function boot()
     {
         parent::boot();
+
+        static::saving(function ($detalle) {
+            $detalle->venta_total = $detalle->venta_precio * $detalle->venta_cantidad;
+        });
 
         // Antes de crear un detalle: validar que hay stock suficiente
         // static::creating(function ($detalle) {

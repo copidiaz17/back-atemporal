@@ -27,16 +27,16 @@ class Producto extends Model
 
     public function categoria(): BelongsTo
     {
-        return $this->belongsTo(Categoria::class, 'categoria_id');
+        return $this->belongsTo(Categoria::class);
     }
 
     public function ventas(): HasMany
     {
-        return $this->hasMany(VentaDetalle::class, 'producto_id', 'id');
+        return $this->hasMany(VentaDetalle::class);
     }
 
     public function stock(): HasOne
     {
-        return $this->hasOne(Stock::class, 'producto_id', 'id');
+        return $this->hasOne(Stock::class);
     }
 }
