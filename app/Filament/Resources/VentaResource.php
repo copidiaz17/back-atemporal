@@ -46,10 +46,11 @@ class VentaResource extends Resource
                     ->disabledOn('edit')
                     ->required(),
                 Fieldset::make()
+                ->label('Productos')
                     ->schema([
                         Repeater::make('detalles')
                             ->relationship('detalles')
-                            ->label('Listado de productos')
+                            // ->label('Listado de productos')
 
                             ->addActionLabel('Añadir otro producto')
                             ->schema([
