@@ -8,7 +8,6 @@ use App\Models\User;
 use App\Models\Venta;
 use Carbon\Carbon;
 use Closure;
-use Filament\Actions\ViewAction;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Fieldset;
@@ -20,17 +19,17 @@ use Filament\Resources\Resource;
 use Filament\Support\RawJs;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Database\Eloquent\Model;
 
 class VentaResource extends Resource
 {
     protected static ?string $model = Venta::class;
 
     protected static ?string $navigationGroup = 'Ventas';
+
     protected static ?string $navigationLabel = 'Ventas';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
 
     public static function form(Forms\Form $form): Forms\Form
     {
@@ -46,17 +45,17 @@ class VentaResource extends Resource
                     ->disabledOn('edit')
                     ->required(),
                 Fieldset::make()
-                ->label('Productos')
+                    ->label('Productos')
                     ->schema([
                         Repeater::make('detalles')
                             ->relationship('detalles')
                             ->label('')
-
                             ->addActionLabel('Añadir otro producto')
                             ->schema([
                                 Select::make('producto_id')
                                     ->label('Producto')
-                                    ->options(Producto::all()->pluck('producto_nombre', 'id'))
+                                    ->options(Producto::query()
+                                        ->pluck('producto_nombre', 'id'))
                                     ->reactive()
                                     ->required()
                                     ->distinct()
@@ -65,7 +64,7 @@ class VentaResource extends Resource
                                         $set('venta_precio', $producto?->producto_precio ?? 0);
                                         $set('stock_disponible', $producto?->producto_cantidad ?? 0);
                                         $set('venta_cantidad', 1);
-                                        
+
                                         $set('venta_total', $state * $get('venta_precio'));
                                     }),
                                 TextInput::make('venta_cantidad')
@@ -73,45 +72,39 @@ class VentaResource extends Resource
                                     ->required()
                                     ->numeric()
                                     ->reactive()
-                                    // ->rules([
-                                    //     fn(Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
-                                    //         $stockDisponible =  Producto::find($get('producto_id'))->producto_cantidad;
-                                    //         if ($value > $stockDisponible) {
-                                    //             $fail("La cantidad no está disponible en stock");
-                                    //         }
-                                    //     },
-                                    // ]),
-                                    ->afterStateUpdated(function (callable $set, $get, $state) {
-                                        $stockDisponible = Producto::find($get('producto_id'))?->producto_cantidad ?? 0;
+                                    ->rules([
+                                        fn(Get $get, Model $record): Closure => function (string $attribute, mixed $value, Closure $fail) use ($get, $record) {
+                                            $stockDisponible =  Producto::find($get('producto_id'))->producto_cantidad;
+                                            $cantidadActual = $record->venta_cantidad ?? 0;
 
-                                        $set('venta_total', $state * $get('venta_precio'));
+                                            if ($cantidadActual == $value || $cantidadActual > $value) {
+                                                return;
+                                            }
 
-                                        if ($state > $stockDisponible) {
-                                            $set('venta_cantidad', $stockDisponible);
+                                            if ($stockDisponible == 0) {
+                                                $fail("No hay mas stock disponible para este producto");
+                                            }
 
-                                            // throw new \Exception("La cantidad excede el stock disponible: {$stockDisponible}");
-                                        }
-                                    }),
-
+                                            if ($value > $stockDisponible + $cantidadActual) {
+                                                $fail("Solamente hay {$stockDisponible} unidades disponibles");
+                                            }
+                                        },
+                                    ]),
                                 TextInput::make('venta_precio')
                                     ->label('Precio Unitario')
                                     ->required()
                                     ->disabled(false)
                                     ->prefix('$')
                                     ->suffix('ARS')
-                                    ->mask(RawJs::make('$money($input)'))
+                                    // ->mask(RawJs::make('$money($input)'))
                                     ->dehydrated(),
                                 TextInput::make('venta_total')
                                     ->label('Total')
                                     ->numeric()
                                     ->prefix('$')
                                     ->suffix('ARS')
-                                    ->mask(RawJs::make('$money($input)'))
+                                    // ->mask(RawJs::make('$money($input)'))
                                     ->disabled(),
-                                // TextInput::make('stock_disponible')
-                                //     ->label('Stock Disponible')
-                                //     ->disabled()
-                                //     ->hiddenOn('create'),
                             ])
                             ->columnSpan(2)
                             ->columns(2)
@@ -123,7 +116,6 @@ class VentaResource extends Resource
     {
         return $table
             ->columns([
-                // TextColumn::make('id')->label('ID Venta'),
                 TextColumn::make('cliente.name')->label('Cliente'),
                 TextColumn::make('cliente.email')->label('Correo Electrónico'),
                 TextColumn::make('detalles')->label('Productos Vendidos')->html()
@@ -166,16 +158,9 @@ class VentaResource extends Resource
             // Obtener el producto asociado
             $producto = Producto::find($detalle->producto_id);
 
-            if ($producto) {
-                // Verificar si hay suficiente stock
-                if ($producto->producto_cantidad < $detalle->venta_cantidad) {
-                    // throw new \Exception("No hay suficiente stock para el producto: {$producto->producto_nombre}");
-                }
-
-                // Reducir el stock
-                $producto->producto_cantidad -= $detalle->venta_cantidad;
-                $producto->save(); // Guardar los cambios en la base de datos
-            }
+            // Reducir el stock
+            $producto->producto_cantidad -= $detalle->venta_cantidad;
+            $producto->save();
         }
     }
 

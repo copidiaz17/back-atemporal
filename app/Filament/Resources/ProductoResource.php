@@ -2,23 +2,15 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Forms\Components\ImageInput;
 use App\Filament\Resources\ProductoResource\Pages;
-use App\Filament\Resources\ProductoResource\RelationManagers;
 use App\Models\Categoria;
 use App\Models\Producto;
 use Filament\Forms;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Group;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Support\RawJs;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use PhpParser\Node\Stmt\Label;
 
 class ProductoResource extends Resource
 {
@@ -26,7 +18,7 @@ class ProductoResource extends Resource
 
     protected static ?string $navigationGroup = 'Productos';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-shopping-bag';
 
     public static function form(Form $form): Form
     {
@@ -40,7 +32,6 @@ class ProductoResource extends Resource
                     ->required()
                     ->maxLength(255)
                     ->label('Descripcion'),
-
                 Forms\Components\FileUpload::make('producto_imagen')
                     ->label('Imagen del Producto')
                     ->required()
@@ -58,7 +49,6 @@ class ProductoResource extends Resource
                     ->label('Categoría')
                     ->required()
                     ->options(Categoria::all()->pluck('categoria_nombre', 'id'))
-                    // ->relationship('categoria', 'categoria_nombre')
                     ->searchable(),
                 Forms\Components\TextInput::make('producto_cantidad')
                     ->required()
@@ -80,18 +70,12 @@ class ProductoResource extends Resource
                     ->sortable()
                     ->default(0)
                     ->getStateUsing(fn($record) => $record->stock?->cantidad ?? 0),
-                //Tables\Columns\TextColumn::make('producto_descripcion')
-                //  ->searchable()
-                //->label('Descripcion'),
                 Tables\Columns\ImageColumn::make('producto_imagen')
                     ->label('Imagen')
                     ->circular(),
-                //->disk('public')
-                //->url(fn ($record) => $record->producto_imagen ? url('storage/images/productos/' . $record->producto_imagen) : url('images/productos/default-image.jpg')),
                 Tables\Columns\TextColumn::make('producto_cantidad')
                     ->label('Cantidad')
                     ->sortable(),
-
                 Tables\Columns\TextColumn::make('producto_precio')
                     ->numeric()
                     ->money('ARS')
@@ -107,9 +91,9 @@ class ProductoResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                ->label(''),
+                    ->label(''),
                 Tables\Actions\ViewAction::make()
-                ->label(''),
+                    ->label(''),
                 Tables\Actions\DeleteAction::make()
                     ->label('')
             ])
