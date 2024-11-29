@@ -15,6 +15,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
+use Illuminate\Support\Facades\Log;
 
 class VentaResource extends Resource
 {
@@ -59,7 +60,7 @@ class VentaResource extends Resource
                             ->reactive()
                             ->afterStateUpdated(function (callable $set, $get, $state) {
                                 $stockDisponible = Producto::find($get('producto_id'))?->producto_cantidad ?? 0;
-                        
+                                Log::info($state, $get('venta_cantidad'));
                                 if ($state > $stockDisponible) {
                                     $set('venta_cantidad', $stockDisponible);
                                     

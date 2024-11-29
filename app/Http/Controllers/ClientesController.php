@@ -70,7 +70,7 @@ class ClientesController extends Controller
         ]);
 
         if (!$auth) {
-            abort(422);
+            return abort(422);
         }
         $id = Auth::user()->id;
 
