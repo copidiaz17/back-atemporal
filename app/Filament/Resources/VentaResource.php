@@ -7,11 +7,13 @@ use App\Models\Producto;
 use App\Models\User;
 use App\Models\Venta;
 use Carbon\Carbon;
+use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -53,20 +55,34 @@ class VentaResource extends Resource
                                 $set('venta_precio', $producto?->producto_precio ?? 0);
                                 $set('stock_disponible', $producto?->producto_cantidad ?? 0);
                             }),
-                            TextInput::make('venta_cantidad')
+                        TextInput::make('venta_cantidad')
                             ->label('Cantidad')
                             ->required()
                             ->numeric()
                             ->reactive()
-                            ->afterStateUpdated(function (callable $set, $get, $state) {
-                                $stockDisponible = Producto::find($get('producto_id'))?->producto_cantidad ?? 0;
-                                if ($state > $stockDisponible) {
-                                    $set('venta_cantidad', $stockDisponible);
-                                    
-                                    // throw new \Exception("La cantidad excede el stock disponible: {$stockDisponible}");
-                                }
-                            }),
-                        
+                            ->rules([
+                                fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                                    $stockDisponible =  Producto::find($get('producto_id'))->producto_cantidad;
+                                    if ($value > $stockDisponible) {
+                                        $fail("La cantidad no está disponible en stock");
+                                    }
+                                },
+                                // fn() (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                                //     $stockDisponible =  Producto::find($get('producto_id'))->producto_cantidad;
+                                //     if ($value > $stockDisponible) {
+                                //         $fail('The :attribute is invalid.');
+                                //     }
+                                // },
+                            ]),
+                        // ->afterStateUpdated(function (callable $set, $get, $state) {
+                        //     $stockDisponible = Producto::find($get('producto_id'))?->producto_cantidad ?? 0;
+                        //     if ($state > $stockDisponible) {
+                        //         $set('venta_cantidad', $stockDisponible);
+
+                        //         // throw new \Exception("La cantidad excede el stock disponible: {$stockDisponible}");
+                        //     }
+                        // }),
+
                         TextInput::make('venta_precio')
                             ->label('Precio Unitario')
                             ->numeric()
@@ -128,13 +144,13 @@ class VentaResource extends Resource
         foreach ($detalles as $detalle) {
             // Obtener el producto asociado
             $producto = Producto::find($detalle->producto_id);
-            
+
             if ($producto) {
                 // Verificar si hay suficiente stock
                 if ($producto->producto_cantidad < $detalle->venta_cantidad) {
                     throw new \Exception("No hay suficiente stock para el producto: {$producto->producto_nombre}");
                 }
-                
+
                 // Reducir el stock
                 $producto->producto_cantidad -= $detalle->venta_cantidad;
                 $producto->save(); // Guardar los cambios en la base de datos
