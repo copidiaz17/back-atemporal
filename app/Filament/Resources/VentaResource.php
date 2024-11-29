@@ -76,7 +76,7 @@ class VentaResource extends Resource
 
                             if ($state > $stockDisponible) {
                                 $set('venta_cantidad', $stockDisponible);
-
+                                
                                 // throw new \Exception("La cantidad excede el stock disponible: {$stockDisponible}");
                             }
                         }),
