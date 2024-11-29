@@ -50,7 +50,7 @@ class VentaResource extends Resource
                     ->schema([
                         Repeater::make('detalles')
                             ->relationship('detalles')
-                            // ->label('Listado de productos')
+                            ->label('')
 
                             ->addActionLabel('Añadir otro producto')
                             ->schema([
