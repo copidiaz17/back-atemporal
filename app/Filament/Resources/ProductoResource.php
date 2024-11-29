@@ -43,7 +43,6 @@ class ProductoResource extends Resource
                     ->numeric()
                     ->prefix('$')
                     ->suffix('ARS')
-                    ->mask(RawJs::make('$money($input)'))
                     ->label('Precio'),
                 Forms\Components\Select::make('categoria_id')
                     ->label('Categoría')
