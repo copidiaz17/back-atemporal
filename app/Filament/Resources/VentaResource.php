@@ -73,7 +73,7 @@ class VentaResource extends Resource
                                     ->numeric()
                                     ->reactive()
                                     ->rules([
-                                        fn(Get $get, Model $record): Closure => function (string $attribute, mixed $value, Closure $fail) use ($get, $record) {
+                                        fn(Get $get, ?Model $record): Closure => function (string $attribute, mixed $value, Closure $fail) use ($get, $record) {
                                             $stockDisponible =  Producto::find($get('producto_id'))->producto_cantidad;
                                             $cantidadActual = $record->venta_cantidad ?? 0;
 
