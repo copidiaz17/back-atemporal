@@ -39,6 +39,7 @@ class VentaResource extends Resource
                     ->searchable(),
                 DatePicker::make('venta_fecha')
                     ->default(Carbon::now())
+                    ->disabledOn('edit')
                     ->required(),
                 Repeater::make('detalles')
                     ->relationship('detalles')
