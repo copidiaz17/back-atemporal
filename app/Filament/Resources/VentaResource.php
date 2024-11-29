@@ -36,11 +36,11 @@ class VentaResource extends Resource
     {
         return $form
             ->schema([
-                // Select::make('cliente_id')
-                //     ->label('Cliente')
-                //     ->required()
-                //     ->options(User::all()->pluck('name', 'id'))
-                //     ->searchable(),
+                Select::make('cliente_id')
+                    ->label('Cliente')
+                    ->required()
+                    ->options(User::all()->pluck('name', 'id'))
+                    ->searchable(),
                 DatePicker::make('venta_fecha')
                     ->default(Carbon::now())
                     ->disabledOn('edit')
@@ -123,7 +123,7 @@ class VentaResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('id')->label('ID Venta'),
+                // TextColumn::make('id')->label('ID Venta'),
                 TextColumn::make('cliente.name')->label('Cliente'),
                 TextColumn::make('cliente.email')->label('Correo Electrónico'),
                 TextColumn::make('detalles')->label('Productos Vendidos')->html()
