@@ -71,6 +71,9 @@ class VentaResource extends Resource
                             // ]),
                         ->afterStateUpdated(function (callable $set, $get, $state) {
                             $stockDisponible = Producto::find($get('producto_id'))?->producto_cantidad ?? 0;
+
+                            $set('venta_total', $state * $get('venta_cantidad'));
+
                             if ($state > $stockDisponible) {
                                 $set('venta_cantidad', $stockDisponible);
 
