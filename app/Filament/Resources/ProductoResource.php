@@ -95,6 +95,7 @@ class ProductoResource extends Resource
                 Tables\Columns\TextColumn::make('producto_precio')
                     ->numeric()
                     ->money('ARS')
+                    ->prefix('$')
                     ->sortable()
                     ->label('Precio'),
                 Tables\Columns\TextColumn::make('categoria.categoria_nombre')

@@ -11,6 +11,7 @@ use Closure;
 use Filament\Actions\ViewAction;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -44,69 +45,74 @@ class VentaResource extends Resource
                     ->default(Carbon::now())
                     ->disabledOn('edit')
                     ->required(),
-                Repeater::make('detalles')
-                    ->relationship('detalles')
-                    ->label('Productos')
+                Fieldset::make()
                     ->schema([
-                        Select::make('producto_id')
-                            ->label('Producto')
-                            ->options(Producto::all()->pluck('producto_nombre', 'id'))
-                            ->reactive()
-                            ->required()
-                            ->distinct()
-                            ->afterStateUpdated(function (callable $set, $state) {
-                                $producto = Producto::find($state);
-                                $set('venta_precio', $producto?->producto_precio ?? 0);
-                                $set('stock_disponible', $producto?->producto_cantidad ?? 0);
-                                $set('venta_cantidad', 1);
-                            }),
-                        TextInput::make('venta_cantidad')
-                            ->label('Cantidad')
-                            ->required()
-                            ->numeric()
-                            ->reactive()
-                            // ->rules([
-                            //     fn(Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
-                            //         $stockDisponible =  Producto::find($get('producto_id'))->producto_cantidad;
-                            //         if ($value > $stockDisponible) {
-                            //             $fail("La cantidad no está disponible en stock");
-                            //         }
-                            //     },
-                            // ]),
-                        ->afterStateUpdated(function (callable $set, $get, $state) {
-                            $stockDisponible = Producto::find($get('producto_id'))?->producto_cantidad ?? 0;
+                        Repeater::make('detalles')
+                            ->relationship('detalles')
+                            ->label('Listado de productos')
 
-                            $set('venta_total', $state * $get('venta_precio'));
+                            ->addActionLabel('Añadir otro producto')
+                            ->schema([
+                                Select::make('producto_id')
+                                    ->label('Producto')
+                                    ->options(Producto::all()->pluck('producto_nombre', 'id'))
+                                    ->reactive()
+                                    ->required()
+                                    ->distinct()
+                                    ->afterStateUpdated(function (callable $set, $state) {
+                                        $producto = Producto::find($state);
+                                        $set('venta_precio', $producto?->producto_precio ?? 0);
+                                        $set('stock_disponible', $producto?->producto_cantidad ?? 0);
+                                        $set('venta_cantidad', 1);
+                                    }),
+                                TextInput::make('venta_cantidad')
+                                    ->label('Cantidad')
+                                    ->required()
+                                    ->numeric()
+                                    ->reactive()
+                                    // ->rules([
+                                    //     fn(Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                                    //         $stockDisponible =  Producto::find($get('producto_id'))->producto_cantidad;
+                                    //         if ($value > $stockDisponible) {
+                                    //             $fail("La cantidad no está disponible en stock");
+                                    //         }
+                                    //     },
+                                    // ]),
+                                    ->afterStateUpdated(function (callable $set, $get, $state) {
+                                        $stockDisponible = Producto::find($get('producto_id'))?->producto_cantidad ?? 0;
 
-                            if ($state > $stockDisponible) {
-                                $set('venta_cantidad', $stockDisponible);
-                                
-                                // throw new \Exception("La cantidad excede el stock disponible: {$stockDisponible}");
-                            }
-                        }),
+                                        $set('venta_total', $state * $get('venta_precio'));
 
-                        TextInput::make('venta_precio')
-                            ->label('Precio Unitario')
-                            ->required()
-                            ->disabled(false)
-                            ->prefix('$')
-                            ->suffix('ARS')
-                            ->mask(RawJs::make('$money($input)'))
-                            ->dehydrated(),
-                        TextInput::make('venta_total')
-                            ->label('Total')
-                            ->numeric()
-                            ->prefix('$')
-                            ->suffix('ARS')
-                            ->mask(RawJs::make('$money($input)'))
-                            ->disabled(),
-                        // TextInput::make('stock_disponible')
-                        //     ->label('Stock Disponible')
-                        //     ->disabled()
-                        //     ->hiddenOn('create'),
+                                        if ($state > $stockDisponible) {
+                                            $set('venta_cantidad', $stockDisponible);
+
+                                            // throw new \Exception("La cantidad excede el stock disponible: {$stockDisponible}");
+                                        }
+                                    }),
+
+                                TextInput::make('venta_precio')
+                                    ->label('Precio Unitario')
+                                    ->required()
+                                    ->disabled(false)
+                                    ->prefix('$')
+                                    ->suffix('ARS')
+                                    ->mask(RawJs::make('$money($input)'))
+                                    ->dehydrated(),
+                                TextInput::make('venta_total')
+                                    ->label('Total')
+                                    ->numeric()
+                                    ->prefix('$')
+                                    ->suffix('ARS')
+                                    ->mask(RawJs::make('$money($input)'))
+                                    ->disabled(),
+                                // TextInput::make('stock_disponible')
+                                //     ->label('Stock Disponible')
+                                //     ->disabled()
+                                //     ->hiddenOn('create'),
+                            ])
+                            ->columnSpan(2)
+                            ->columns(2)
                     ])
-                    ->columnSpan(2)
-                    ->columns(2),
             ]);
     }
 
@@ -137,11 +143,11 @@ class VentaResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                ->label(''),
+                    ->label(''),
                 Tables\Actions\ViewAction::make()
-                ->label(''),
+                    ->label(''),
                 Tables\Actions\DeleteAction::make()
-                ->label(''),
+                    ->label(''),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
