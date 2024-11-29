@@ -72,8 +72,6 @@ class ClientesController extends Controller
         ];
 
         if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-
             /** @var User $cliente */
             $cliente = Auth::user();
 
