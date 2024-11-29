@@ -42,7 +42,7 @@ class ClientesController extends Controller
         $cliente->telefono  = $request->input('cliente_telefono');
         $cliente->save();
 
-        return response()->json(['status' => 'OK'], 200)
+        return response()
             ->cookie(
                 'atemporal_token',          // Nombre de la cookie
                 $cliente->createToken('accessToken')->plainTextToken,
@@ -78,7 +78,7 @@ class ClientesController extends Controller
 
         $cliente->tokens()->delete();
 
-        return response()->json(['status' => 'OK'], 200)
+        return response()
             ->cookie(
                 'atemporal_token',          // Nombre de la cookie
                 $cliente->createToken('accessToken')->plainTextToken,

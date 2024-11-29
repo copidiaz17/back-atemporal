@@ -77,10 +77,10 @@ class VentaResource extends Resource
                             ->label('Total')
                             ->numeric()
                             ->disabled(),
-                        TextInput::make('stock_disponible')
-                            ->label('Stock Disponible')
-                            ->disabled()
-                            ->hiddenOn('create'),
+                        // TextInput::make('stock_disponible')
+                        //     ->label('Stock Disponible')
+                        //     ->disabled()
+                        //     ->hiddenOn('create'),
                     ])
                     ->columnSpan(2)
                     ->columns(2),
