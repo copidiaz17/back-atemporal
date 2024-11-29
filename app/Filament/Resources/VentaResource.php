@@ -60,7 +60,7 @@ class VentaResource extends Resource
                                     ->reactive()
                                     ->required()
                                     ->distinct()
-                                    ->afterStateUpdated(function (callable $set, $state) {
+                                    ->afterStateUpdated(function (callable $set, $get, $state) {
                                         $producto = Producto::find($state);
                                         $set('venta_precio', $producto?->producto_precio ?? 0);
                                         $set('stock_disponible', $producto?->producto_cantidad ?? 0);
