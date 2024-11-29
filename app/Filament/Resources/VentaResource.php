@@ -65,6 +65,8 @@ class VentaResource extends Resource
                                         $set('venta_precio', $producto?->producto_precio ?? 0);
                                         $set('stock_disponible', $producto?->producto_cantidad ?? 0);
                                         $set('venta_cantidad', 1);
+                                        
+                                        $set('venta_total', $state * $get('venta_precio'));
                                     }),
                                 TextInput::make('venta_cantidad')
                                     ->label('Cantidad')
