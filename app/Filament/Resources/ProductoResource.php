@@ -13,6 +13,7 @@ use Filament\Forms\Components\Group;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Support\RawJs;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -49,6 +50,9 @@ class ProductoResource extends Resource
                 Forms\Components\TextInput::make('producto_precio')
                     ->required()
                     ->numeric()
+                    ->prefix('$')
+                    ->suffix('ARS')
+                    ->mask(RawJs::make('$money($input)'))
                     ->label('Precio'),
                 Forms\Components\Select::make('categoria_id')
                     ->label('Categoría')
@@ -90,6 +94,7 @@ class ProductoResource extends Resource
 
                 Tables\Columns\TextColumn::make('producto_precio')
                     ->numeric()
+                    ->money('ARS')
                     ->sortable()
                     ->label('Precio'),
                 Tables\Columns\TextColumn::make('categoria.categoria_nombre')
@@ -100,9 +105,12 @@ class ProductoResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make()
+                ->label(''),
+                Tables\Actions\ViewAction::make()
+                ->label(''),
                 Tables\Actions\DeleteAction::make()
+                    ->label('')
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

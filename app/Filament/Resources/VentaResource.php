@@ -16,6 +16,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
+use Filament\Support\RawJs;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -85,13 +86,18 @@ class VentaResource extends Resource
 
                         TextInput::make('venta_precio')
                             ->label('Precio Unitario')
-                            ->numeric()
                             ->required()
                             ->disabled(false)
+                            ->prefix('$')
+                            ->suffix('ARS')
+                            ->mask(RawJs::make('$money($input)'))
                             ->dehydrated(),
                         TextInput::make('venta_total')
                             ->label('Total')
                             ->numeric()
+                            ->prefix('$')
+                            ->suffix('ARS')
+                            ->mask(RawJs::make('$money($input)'))
                             ->disabled(),
                         // TextInput::make('stock_disponible')
                         //     ->label('Stock Disponible')
@@ -129,8 +135,12 @@ class VentaResource extends Resource
                     }),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                ->label(''),
                 Tables\Actions\ViewAction::make()
+                ->label(''),
+                Tables\Actions\DeleteAction::make()
+                ->label(''),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
