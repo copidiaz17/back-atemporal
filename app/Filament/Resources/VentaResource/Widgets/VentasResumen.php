@@ -22,9 +22,7 @@ class VentasResumen extends BaseWidget
         return [
             //
             Stat::make('Ventas', $ventas),
-            Stat::make('Monto total', '$'.$total),
-            Stat::make('Unique views', '192.1k'),
-            Stat::make('Unique views', '192.1k'),
+            Stat::make('Monto total', '$' . $total),
         ];
     }
 }
