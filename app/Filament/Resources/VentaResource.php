@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Venta;
 use Carbon\Carbon;
 use Closure;
+use Filament\Actions\ViewAction;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Repeater;
@@ -17,6 +18,7 @@ use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 use Illuminate\Support\Facades\Log;
 
 class VentaResource extends Resource
@@ -128,6 +130,7 @@ class VentaResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make()
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
@@ -146,7 +149,7 @@ class VentaResource extends Resource
             if ($producto) {
                 // Verificar si hay suficiente stock
                 if ($producto->producto_cantidad < $detalle->venta_cantidad) {
-                    throw new \Exception("No hay suficiente stock para el producto: {$producto->producto_nombre}");
+                    // throw new \Exception("No hay suficiente stock para el producto: {$producto->producto_nombre}");
                 }
 
                 // Reducir el stock
