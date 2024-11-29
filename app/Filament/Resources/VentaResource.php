@@ -36,11 +36,11 @@ class VentaResource extends Resource
     {
         return $form
             ->schema([
-                Select::make('cliente_id')
-                    ->label('Cliente')
-                    ->required()
-                    ->options(User::all()->pluck('name', 'id'))
-                    ->searchable(),
+                // Select::make('cliente_id')
+                //     ->label('Cliente')
+                //     ->required()
+                //     ->options(User::all()->pluck('name', 'id'))
+                //     ->searchable(),
                 DatePicker::make('venta_fecha')
                     ->default(Carbon::now())
                     ->disabledOn('edit')
