@@ -58,6 +58,7 @@ class VentaResource extends Resource
                                 $producto = Producto::find($state);
                                 $set('venta_precio', $producto?->producto_precio ?? 0);
                                 $set('stock_disponible', $producto?->producto_cantidad ?? 0);
+                                $set('venta_cantidad', 1);
                             }),
                         TextInput::make('venta_cantidad')
                             ->label('Cantidad')
