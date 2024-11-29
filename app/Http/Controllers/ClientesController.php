@@ -41,7 +41,18 @@ class ClientesController extends Controller
         Auth::login($cliente);
 
         return response()
-            ->json(['status' => 'OK'], 200);
+            ->json(['status' => 'OK'], 200)
+            ->cookie(
+                'atemporal_token',          // Nombre de la cookie
+                $cliente->createToken('accessToken')->plainTextToken,
+                60,
+                '/',
+                config('session.domain'),
+                false,
+                true,
+                false,
+                'Lax'
+            );
     }
     public function ingresar()
     {
@@ -63,8 +74,22 @@ class ClientesController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
+            /** @var User $cliente */
+            $cliente = Auth::user();
+
             return response()
-                ->json(['status' => 'OK'], 200);
+                ->json(['status' => 'OK'], 200)
+                ->cookie(
+                    'atemporal_token',
+                    $cliente->createToken('accessToken')->plainTextToken,
+                    60,
+                    '/',
+                    config('session.domain'),
+                    false,
+                    true,
+                    false,
+                    'Lax'
+                );
         }
 
         abort(422);
